@@ -173,3 +173,78 @@ func TestEncoderString(t *testing.T) {
 	}
 }
 
+func TestEncoderStruct(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Struct2); err != nil {
+		t.Error("failed to encode struct")
+	}
+
+	if string(s.Data) != string(expectedStruct) {
+		t.Errorf("expected %v, received: %v", expectedStruct, s.Data)
+	}
+}
+
+func TestEncoderStructNumbers(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(StructNumbersValue); err != nil {
+		t.Error("failed to encode struct numbers")
+	}
+
+	if string(s.Data) != string(expectedStructNumbers) {
+		t.Errorf("expected %v, received: %v", expectedStructNumbers, s.Data)
+	}
+}
+
+func TestEncoderStructArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(StructArrayValue); err != nil {
+		t.Error("failed to encode struct array")
+	}
+
+	if string(s.Data) != string(expectedStructArray) {
+		t.Errorf("expected %v, received: %v", expectedStructArray, s.Data)
+	}
+}
+
+func TestEncoderStructMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(StructMapValue); err != nil {
+		t.Error("failed to encode struct map")
+	}
+
+	if string(s.Data) != string(expectedStructMap) {
+		t.Errorf("expected %v, received: %v", expectedStructMap, s.Data)
+	}
+}
+
+func TestEncoderStructAll(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(StructAllValue); err != nil {
+		t.Error("failed to encode struct all")
+	}
+
+	if string(s.Data) != string(expectedStructAll) {
+		t.Errorf("expected %v, received: %v", expectedStructAll, s.Data)
+	}
+}
+
