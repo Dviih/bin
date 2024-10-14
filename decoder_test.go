@@ -157,6 +157,25 @@ func TestDecoderArray(t *testing.T) {
 	}
 }
 
+func TestDecoderMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedMap,
+	}
+
+	decoder := NewDecoder(s)
+
+	var m map[byte]int
+	if err := decoder.Decode(&m); err != nil {
+		t.Error("failed to decode map")
+	}
+
+	if !reflect.DeepEqual(m, Map) {
+		t.Errorf("expected %v, received: %v", Map, m)
+	}
+}
+
 func TestDecoderSlice(t *testing.T) {
 	t.Parallel()
 
