@@ -25,3 +25,7 @@ import (
 	"reflect"
 )
 
+type Decoder struct {
+	reader io.Reader
+}
+
