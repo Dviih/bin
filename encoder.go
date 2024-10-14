@@ -238,3 +238,7 @@ func (encoder *Encoder) _struct(value reflect.Value, kind bool) error {
 
 	return nil
 }
+
+func NewEncoder(writer io.Writer) *Encoder {
+	return &Encoder{writer: writer}
+}
