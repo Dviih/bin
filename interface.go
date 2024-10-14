@@ -23,3 +23,14 @@ import (
 	"reflect"
 )
 
+func Interface(v interface{}) reflect.Value {
+	if v == nil {
+		return reflect.New(reflect.TypeFor[interface{}]()).Elem()
+	}
+
+	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
+	ptr.Set(_interface(Value(v)))
+
+	return ptr
+}
+
