@@ -480,3 +480,22 @@ func TestDecoderInterfaceSlice2(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceString(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceString,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode string")
+	}
+
+	if i.(string) != String {
+		t.Errorf("expected %v, received: %v", String, i)
+	}
+}
+
