@@ -27,3 +27,7 @@ import (
 	"strconv"
 )
 
+type Encoder struct {
+	writer io.Writer
+}
+
