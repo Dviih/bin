@@ -309,3 +309,22 @@ func TestDecoderStructAll(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedNil,
+	}
+
+	decoder := NewDecoder(s)
+
+	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
+	if err := decoder.Decode(ptr); err != nil {
+		t.Error("failed to decode nil")
+	}
+
+	if !ptr.IsNil() {
+		t.Errorf("expected %v, received: %v", Nil, ptr)
+	}
+}
+
