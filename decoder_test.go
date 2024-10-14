@@ -24,3 +24,22 @@ import (
 	"testing"
 )
 
+func TestDecoderNil(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedNil,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode nil")
+	}
+
+	if i != Nil {
+		t.Errorf("expected %v, received: %v", Nil, i)
+	}
+}
+
