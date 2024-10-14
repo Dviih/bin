@@ -499,3 +499,112 @@ func TestDecoderInterfaceString(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceStruct(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceStruct,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode struct")
+	}
+
+	var st *Struct1
+	i.(*Struct).As(&st)
+
+	if !reflect.DeepEqual(st, Struct2) {
+		t.Errorf("expected %v, received: %v", Struct2, st)
+	}
+}
+
+func TestDecoderInterfaceStructNumbers(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceStructNumbers,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode struct numbers")
+	}
+
+	var st *StructNumbers
+	i.(*Struct).As(&st)
+
+	if !reflect.DeepEqual(st, StructNumbersValue) {
+		t.Errorf("expected %v, received: %v", StructNumbersValue, st)
+	}
+}
+
+func TestDecoderInterfaceStructArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceStructArray,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode struct array")
+	}
+
+	var st *StructArray
+	i.(*Struct).As(&st)
+
+	if !reflect.DeepEqual(st, StructArrayValue) {
+		t.Errorf("expected %v, received: %v", StructArrayValue, st)
+	}
+}
+
+func TestDecoderInterfaceStructMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceStructMap,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode struct map")
+	}
+
+	var st *StructMap
+	i.(*Struct).As(&st)
+
+	if !reflect.DeepEqual(st, StructMapValue) {
+		t.Errorf("expected %v, received: %v", StructMapValue, st)
+	}
+}
+
+func TestDecoderInterfaceStructAll(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceStructAll,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode struct all")
+	}
+
+	var st *StructAll
+	i.(*Struct).As(&st)
+
+	if !reflect.DeepEqual(st, StructAllValue) {
+		t.Errorf("expected %v, received: %v", StructAllValue, st)
+	}
+}
