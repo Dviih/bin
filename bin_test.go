@@ -41,3 +41,42 @@ func (stream *stream) Read(data []byte) (int, error) {
 	return i, nil
 }
 
+type Struct1 struct {
+	FieldOne string `bin:"100"`
+	FieldTwo uint64 `bin:"200"`
+}
+
+type StructNumbers struct {
+	Int        int        `bin:"10"`
+	Int8       int8       `bin:"20"`
+	Int16      int16      `bin:"30"`
+	Int32      int32      `bin:"40"`
+	Int64      int64      `bin:"50"`
+	Uint       uint       `bin:"60"`
+	Uint8      uint8      `bin:"70"`
+	Uint16     uint16     `bin:"80"`
+	Uint32     uint32     `bin:"90"`
+	Uint64     uint64     `bin:"100"`
+	Float32    float32    `bin:"110"`
+	Float64    float64    `bin:"120"`
+	Complex64  complex64  `bin:"130"`
+	Complex128 complex128 `bin:"140"`
+}
+
+type StructArray struct {
+	Numbers []int         `bin:"10"`
+	Stuff   []interface{} `bin:"20"`
+}
+
+type StructMap struct {
+	Data  map[byte]uint64             `bin:"10"`
+	Stuff map[interface{}]interface{} `bin:"20"`
+}
+
+type StructAll struct {
+	One   *Struct1
+	Two   *StructNumbers
+	Three *StructArray
+	Four  *StructMap
+}
+
