@@ -19,3 +19,7 @@
 
 package bin
 
+import (
+	"reflect"
+)
+
