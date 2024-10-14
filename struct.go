@@ -67,3 +67,12 @@ func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
 	return m
 }
 
+func (_struct *Struct) Get(i int) (interface{}, bool) {
+	v, ok := _struct.m[i]
+	if !ok {
+		return nil, false
+	}
+
+	return v.Interface(), true
+}
+
