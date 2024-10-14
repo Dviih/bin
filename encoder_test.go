@@ -23,3 +23,18 @@ import (
 	"testing"
 )
 
+func TestEncoderNil(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Nil); err != nil {
+		t.Error("failed to encode nil")
+	}
+
+	if string(s.Data) != string(expectedNil) {
+		t.Errorf("expected %v, received: %v", expectedNil, s.Data)
+	}
+}
+
