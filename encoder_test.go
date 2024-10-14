@@ -293,6 +293,68 @@ func TestEncoderInterfaceArray(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Map)); err != nil {
+		t.Errorf("failed to encode interface map")
+	}
+
+	if string(s.Data) != string(expectedInterfaceMap) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap, s.Data)
+	}
+}
+
+// Key and Value are `interface{}`.
+func TestEncoderInterfaceMap2(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Map2)); err != nil {
+		t.Errorf("failed to encode interface map2")
+	}
+
+	if string(s.Data) != string(expectedInterfaceMap2) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap2, s.Data)
+	}
+}
+
+// Only Key is `interface{}`.
+func TestEncoderInterfaceMap3(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Map3)); err != nil {
+		t.Errorf("failed to encode interface map3")
+	}
+
+	if string(s.Data) != string(expectedInterfaceMap3) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap3, s.Data)
+	}
+}
+
+// Only Value is `interface{}`.
+func TestEncoderInterfaceMap4(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Map4)); err != nil {
+		t.Errorf("failed to encode interface map4")
+	}
+
+	if string(s.Data) != string(expectedInterfaceMap4) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap4, s.Data)
+	}
+}
 
 func TestEncoderInterfaceSlice(t *testing.T) {
 	t.Parallel()
