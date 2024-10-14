@@ -112,3 +112,34 @@ func TestEncoderComplex(t *testing.T) {
 		t.Errorf("expected %v, received: %v", expectedComplex, s.Data)
 	}
 }
+
+func TestEncoderArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Array); err != nil {
+		t.Error("failed to encode array")
+	}
+
+	if string(s.Data) != string(expectedArray) {
+		t.Errorf("expected %v, received: %v", expectedArray, s.Data)
+	}
+}
+
+func TestEncoderSlice(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Slice); err != nil {
+		t.Error("failed to encode slice")
+	}
+
+	if string(s.Data) != string(expectedSlice) {
+		t.Errorf("expected %v, received: %v", expectedSlice, s.Data)
+	}
+}
+
