@@ -328,3 +328,22 @@ func TestDecoderInterfaceNil(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceBool(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceBool,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode bool")
+	}
+
+	if i.(bool) != Bool {
+		t.Errorf("expected %v, received: %v", Bool, i)
+	}
+}
+
