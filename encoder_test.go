@@ -263,3 +263,18 @@ func TestEncoderInterfaceNil(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceBool(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Bool)); err != nil {
+		t.Errorf("failed to encode interface boolean")
+	}
+
+	if string(s.Data) != string(expectedInterfaceBool) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceBool, s.Data)
+	}
+}
+
