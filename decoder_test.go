@@ -43,3 +43,98 @@ func TestDecoderNil(t *testing.T) {
 	}
 }
 
+func TestDecoderBool(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedBool,
+	}
+
+	decoder := NewDecoder(s)
+
+	var b bool
+	if err := decoder.Decode(&b); err != nil {
+		t.Error("failed to decode bool")
+	}
+
+	if b != Bool {
+		t.Errorf("expected %v, received: %v", Bool, b)
+	}
+}
+
+func TestDecoderInt(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInt,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i int
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode int")
+	}
+
+	if i != Int {
+		t.Errorf("expected %v, received: %v", Int, i)
+	}
+}
+
+func TestDecoderUint(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedUint,
+	}
+
+	decoder := NewDecoder(s)
+
+	var u uint
+	if err := decoder.Decode(&u); err != nil {
+		t.Error("failed to decode uint")
+	}
+
+	if u != Uint {
+		t.Errorf("expected %v, received: %v", Uint, u)
+	}
+}
+
+func TestDecoderFloat(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedFloat,
+	}
+
+	decoder := NewDecoder(s)
+
+	var f float64
+	if err := decoder.Decode(&f); err != nil {
+		t.Error("failed to decode float")
+	}
+
+	if f != Float {
+		t.Errorf("expected %v, received: %v", Float, f)
+	}
+}
+
+func TestDecoderComplex(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedComplex,
+	}
+
+	decoder := NewDecoder(s)
+
+	var c complex128
+	if err := decoder.Decode(&c); err != nil {
+		t.Error("failed to decode complex")
+	}
+
+	if c != Complex {
+		t.Errorf("expected %v, received: %v", Complex, c)
+	}
+}
+
