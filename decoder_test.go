@@ -138,3 +138,41 @@ func TestDecoderComplex(t *testing.T) {
 	}
 }
 
+func TestDecoderArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedArray,
+	}
+
+	decoder := NewDecoder(s)
+
+	var array [3]uint64
+	if err := decoder.Decode(&array); err != nil {
+		t.Error("failed to decode array")
+	}
+
+	if array != Array {
+		t.Errorf("expected %v, received: %v", Array, array)
+	}
+}
+
+func TestDecoderSlice(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedSlice,
+	}
+
+	decoder := NewDecoder(s)
+
+	var slice []int
+	if err := decoder.Decode(&slice); err != nil {
+		t.Error("failed to decode slice")
+	}
+
+	if !reflect.DeepEqual(slice, Slice) {
+		t.Errorf("expected %v, received: %v", Slice, slice)
+	}
+}
+
