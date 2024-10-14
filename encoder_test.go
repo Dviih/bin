@@ -278,3 +278,49 @@ func TestEncoderInterfaceBool(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Array)); err != nil {
+		t.Errorf("failed to encode interface array")
+	}
+
+	if string(s.Data) != string(expectedInterfaceArray) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceArray, s.Data)
+	}
+}
+
+
+func TestEncoderInterfaceSlice(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Slice)); err != nil {
+		t.Errorf("failed to encode interface slice")
+	}
+
+	if string(s.Data) != string(expectedInterfaceSlice) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice, s.Data)
+	}
+}
+
+func TestEncoderInterfaceSlice2(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Slice2)); err != nil {
+		t.Errorf("failed to encode interface slice2")
+	}
+
+	if string(s.Data) != string(expectedInterfaceSlice2) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice2, s.Data)
+	}
+}
+
