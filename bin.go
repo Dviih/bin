@@ -39,3 +39,14 @@ func Value(v interface{}) reflect.Value {
 	}
 }
 
+func Zero(value reflect.Value) {
+	for value.Kind() == reflect.Pointer {
+		if !value.CanSet() {
+			break
+		}
+
+		value.Set(reflect.New(value.Type().Elem()))
+		value = value.Elem()
+	}
+}
+
