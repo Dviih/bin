@@ -124,3 +124,92 @@ func (_struct *Struct) fields(value reflect.Value) map[int]reflect.Value {
 	return fields
 }
 
+func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
+	for k, v := range _struct.m {
+		if _, ok := fields[k]; !ok {
+			continue
+		}
+
+		v = Abs[reflect.Value](v)
+
+		switch v.Kind() {
+		case reflect.Map:
+			if fields[k].Type() == v.Type() {
+				fields[k].Set(v)
+				continue
+			}
+
+			field := fields[k]
+			typ := field.Type()
+
+			m := reflect.MakeMap(reflect.MapOf(typ.Key(), typ.Elem()))
+			r := v.MapRange()
+
+			for r.Next() {
+				key := r.Key()
+				if key.Type() != typ.Key() {
+					if key.Kind() == reflect.Interface && key.Elem().Type() == reflect.TypeFor[*Struct]() {
+						s := key.Interface().(*Struct)
+
+						key = reflect.New(typ.Elem()).Elem()
+						s.rangeStruct(s.fields(key))
+					}
+				}
+
+				value := r.Value()
+				if value.Type() != typ.Elem() {
+					if value.Kind() == reflect.Interface && value.Elem().Type() == reflect.TypeFor[*Struct]() {
+						s := value.Interface().(*Struct)
+
+						value = reflect.New(typ.Elem()).Elem()
+						s.rangeStruct(s.fields(value))
+					}
+				}
+
+				m.SetMapIndex(key, value)
+			}
+
+			fields[k].Set(m)
+			continue
+		case reflect.Struct:
+			s, ok := _struct.Get(k)
+			if !ok {
+				continue
+			}
+
+			Zero(fields[k])
+			s.(*Struct).As(Abs[reflect.Value](fields[k]))
+		case reflect.Slice:
+			typ := fields[k].Type().Elem()
+			kind := typ.Kind()
+
+			if kind == reflect.Pointer {
+				kind = Abs[reflect.Type](typ).Kind()
+			}
+
+			field := fields[k]
+			tmp := reflect.New(field.Type()).Elem()
+
+			for i := 0; i < v.Len(); i++ {
+				switch kind {
+				case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.Interface, reflect.String:
+					tmp = reflect.Append(tmp, _struct.ptr(v.Index(i), typ))
+				case reflect.Struct:
+					ptr := reflect.New(typ).Elem()
+
+					if s, ok := v.Index(i).Interface().(*Struct); ok {
+						s.As(ptr)
+					}
+
+					tmp = reflect.Append(tmp, ptr)
+				default:
+				}
+			}
+
+			fields[k].Set(tmp)
+		default:
+			fields[k].Set(v)
+		}
+	}
+}
+
