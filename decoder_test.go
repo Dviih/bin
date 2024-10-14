@@ -195,3 +195,22 @@ func TestDecoderSlice(t *testing.T) {
 	}
 }
 
+func TestDecoderString(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedString,
+	}
+
+	decoder := NewDecoder(s)
+
+	var _string string
+	if err := decoder.Decode(&_string); err != nil {
+		t.Error("failed to decode string")
+	}
+
+	if _string != String {
+		t.Errorf("expected %v, received: %v", String, _string)
+	}
+}
+
