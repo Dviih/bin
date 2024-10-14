@@ -248,3 +248,18 @@ func TestEncoderStructAll(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(nil)); err != nil {
+		t.Errorf("failed to encode interface nil")
+	}
+
+	if string(s.Data) != string(expectedInterfaceNil) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceNil, s.Data)
+	}
+}
+
