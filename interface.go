@@ -34,3 +34,40 @@ func Interface(v interface{}) reflect.Value {
 	return ptr
 }
 
+func _interface(value reflect.Value) reflect.Value {
+	switch value.Kind() {
+	case reflect.Array, reflect.Map, reflect.Slice:
+		return value
+	case reflect.Struct:
+		var fields []reflect.StructField
+		var values []reflect.Value
+
+		typ := value.Type()
+
+		for i := 0; i < value.NumField(); i++ {
+			field := value.Field(i)
+			fieldType := typ.Field(i)
+
+			if !fieldType.IsExported() {
+				continue
+			}
+
+			if lookup, ok := fieldType.Tag.Lookup("bin"); ok && lookup == "-" {
+				continue
+			}
+
+			fields = append(fields, fieldType)
+			values = append(values, field)
+		}
+
+		tmp := reflect.New(reflect.StructOf(fields)).Elem()
+
+		for i, v := range values {
+			tmp.Field(i).Set(v)
+		}
+
+		return tmp
+	default:
+		return value.Convert(reflect.TypeFor[interface{}]())
+	}
+}
