@@ -175,3 +175,26 @@ var (
 	expectedInterfaceStructAll     = []byte{25, 4, 1, 25, 2, 100, 24, 3, 111, 110, 101, 200, 1, 11, 2, 2, 25, 14, 10, 2, 1, 20, 3, 2, 30, 4, 4, 40, 5, 8, 50, 6, 16, 60, 7, 32, 70, 8, 64, 80, 9, 128, 1, 90, 10, 128, 2, 100, 11, 128, 4, 110, 13, 138, 174, 143, 137, 4, 120, 14, 251, 168, 184, 189, 148, 220, 158, 154, 64, 130, 1, 15, 128, 128, 128, 145, 4, 128, 128, 128, 150, 4, 140, 1, 16, 128, 128, 128, 128, 128, 128, 144, 170, 64, 128, 128, 128, 128, 128, 128, 192, 171, 64, 3, 25, 2, 10, 23, 2, 4, 3, 9, 27, 81, 20, 23, 20, 4, 24, 5, 72, 101, 108, 108, 111, 2, 13, 24, 5, 87, 111, 114, 108, 100, 24, 1, 33, 4, 25, 2, 10, 21, 8, 11, 1, 10, 128, 8, 20, 21, 20, 20, 1, 2, 81, 24, 4, 110, 105, 110, 101}
 )
 
+func TestMarshal(t *testing.T) {
+	data, err := Marshal(StructNumbersValue)
+	if err != nil {
+		t.Error("failed to marshal")
+	}
+
+	if string(data) != string(expectedStructNumbers) {
+		t.Errorf("expected %v, received: %v", expectedStructNumbers, data)
+		return
+	}
+}
+
+func TestUnmarshal(t *testing.T) {
+	st, err := Unmarshal[*StructNumbers](expectedStructNumbers)
+	if err != nil {
+		t.Error("failed to unmarshal")
+	}
+
+	if !reflect.DeepEqual(st, StructNumbersValue) {
+		t.Errorf("expected %v, received: %v", StructNumbersValue, st)
+		return
+	}
+}
