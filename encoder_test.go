@@ -38,3 +38,77 @@ func TestEncoderNil(t *testing.T) {
 	}
 }
 
+func TestEncoderBool(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Bool); err != nil {
+		t.Error("failed to encode boolean")
+	}
+
+	if string(s.Data) != string(expectedBool) {
+		t.Errorf("expected %v, received: %v", expectedBool, s.Data)
+	}
+}
+
+func TestEncoderInt(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Int); err != nil {
+		t.Error("failed to encode int")
+	}
+
+	if string(s.Data) != string(expectedInt) {
+		t.Errorf("expected %v, received: %v", expectedInt, s.Data)
+	}
+}
+
+func TestEncoderUint(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Uint); err != nil {
+		t.Error("failed to encode uint")
+	}
+
+	if string(s.Data) != string(expectedUint) {
+		t.Errorf("expected %v, received: %v", expectedUint, s.Data)
+	}
+}
+
+func TestEncoderFloat(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Float); err != nil {
+		t.Error("failed to encode float")
+	}
+
+	if string(s.Data) != string(expectedFloat) {
+		t.Errorf("expected %v, received: %v", expectedFloat, s.Data)
+	}
+}
+
+func TestEncoderComplex(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Complex); err != nil {
+		t.Error("failed to encode complex")
+	}
+
+	if string(s.Data) != string(expectedComplex) {
+		t.Errorf("expected %v, received: %v", expectedComplex, s.Data)
+	}
+}
