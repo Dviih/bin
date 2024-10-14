@@ -19,3 +19,8 @@
 
 package bin
 
+import (
+	"encoding/binary"
+	"io"
+)
+
