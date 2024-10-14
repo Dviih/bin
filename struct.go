@@ -24,3 +24,8 @@ import (
 	"strconv"
 )
 
+// Struct represents any struct.
+type Struct struct {
+	m map[int]reflect.Value
+}
+
