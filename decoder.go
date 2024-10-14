@@ -281,3 +281,100 @@ func (decoder *Decoder) Decode(v interface{}) error {
 	return Invalid
 }
 
+func (decoder *Decoder) _struct(value reflect.Value) error {
+	size, err := VarIntOut[int](decoder)
+	if err != nil {
+		return err
+	}
+
+	s := &Struct{
+		m: make(map[int]reflect.Value),
+	}
+
+	value.Set(reflect.ValueOf(s))
+
+	for i := 0; i < size; i++ {
+		tag, err := VarIntOut[int](decoder)
+		if err != nil {
+			return err
+		}
+
+		fk, err := decoder.ReadByte()
+		if err != nil {
+			return err
+		}
+
+		switch reflect.Kind(fk) {
+		case reflect.Array:
+			ak, err := decoder.ReadByte()
+			if err != nil {
+				return err
+			}
+
+			as, err := VarIntOut[int](decoder)
+			if err != nil {
+				return err
+			}
+
+			tmp := reflect.New(reflect.ArrayOf(as, typeFromKind(ak))).Elem()
+			if err = decoder.Decode(tmp); err != nil {
+				return err
+			}
+
+			s.m[tag] = tmp
+			continue
+		case reflect.Map:
+			mk, err := decoder.ReadByte()
+			if err != nil {
+				return err
+			}
+
+			mv, err := decoder.ReadByte()
+			if err != nil {
+				return err
+			}
+
+			tmp := reflect.New(reflect.MapOf(typeFromKind(mk), typeFromKind(mv))).Elem()
+			if err = decoder.Decode(tmp); err != nil {
+				return err
+			}
+
+			s.m[tag] = tmp
+			continue
+		case reflect.Slice:
+			sk, err := decoder.ReadByte()
+			if err != nil {
+				return err
+			}
+
+			tmp := reflect.New(reflect.SliceOf(typeFromKind(sk))).Elem()
+			if err = decoder.Decode(tmp); err != nil {
+				return err
+			}
+
+			s.m[tag] = tmp
+			continue
+		case reflect.Struct:
+			ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
+
+			if err = decoder._struct(ptr); err != nil {
+				return nil
+			}
+
+			s.m[tag] = ptr
+			continue
+		default:
+		}
+
+		ptr := reflect.New(typeFromKind(fk)).Elem()
+
+		if err = decoder.Decode(ptr); err != nil {
+			return err
+		}
+
+		s.m[tag] = ptr
+	}
+
+	return nil
+}
+
