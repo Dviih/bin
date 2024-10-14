@@ -25,3 +25,9 @@ import (
 	"reflect"
 )
 
+var (
+	Invalid             = errors.New("invalid value")
+	CantSet             = errors.New("can't set")
+	unexpectedBehaviour = errors.New("this is a very unexpected behaviour")
+)
+
