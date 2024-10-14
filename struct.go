@@ -76,3 +76,23 @@ func (_struct *Struct) Get(i int) (interface{}, bool) {
 	return v.Interface(), true
 }
 
+func (_struct *Struct) As(v interface{}) {
+	var value reflect.Value
+
+	if rv, ok := v.(reflect.Value); ok {
+		value = rv
+	} else {
+		value = Abs[reflect.Value](reflect.ValueOf(v))
+
+		if value.Kind() != reflect.Struct || !value.CanSet() {
+			return
+		}
+	}
+
+	if value.Kind() == reflect.Pointer {
+		value = Abs[reflect.Value](value)
+	}
+
+	_struct.rangeStruct(_struct.fields(value))
+}
+
