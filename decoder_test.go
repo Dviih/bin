@@ -214,3 +214,98 @@ func TestDecoderString(t *testing.T) {
 	}
 }
 
+func TestDecoderStruct(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedStruct,
+	}
+
+	decoder := NewDecoder(s)
+
+	var struct2 *Struct1
+	if err := decoder.Decode(&struct2); err != nil {
+		t.Error("failed to decode struct")
+	}
+
+	if !reflect.DeepEqual(struct2, Struct2) {
+		t.Errorf("expected %v, received: %v", Struct2, struct2)
+	}
+}
+
+func TestDecoderStructNumbers(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedStructNumbers,
+	}
+
+	decoder := NewDecoder(s)
+
+	var structNumbers *StructNumbers
+	if err := decoder.Decode(&structNumbers); err != nil {
+		t.Error("failed to decode struct numbers")
+	}
+
+	if !reflect.DeepEqual(structNumbers, StructNumbersValue) {
+		t.Errorf("expected %v, received: %v", StructNumbersValue, structNumbers)
+	}
+}
+
+func TestDecoderStructArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedStructArray,
+	}
+
+	decoder := NewDecoder(s)
+
+	var structArray *StructArray
+	if err := decoder.Decode(&structArray); err != nil {
+		t.Error("failed to decode struct array")
+	}
+
+	if !reflect.DeepEqual(structArray, StructArrayValue) {
+		t.Errorf("expected %v, received: %v", StructArrayValue, structArray)
+	}
+}
+
+func TestDecoderStructMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedStructMap,
+	}
+
+	decoder := NewDecoder(s)
+
+	var structMap *StructMap
+	if err := decoder.Decode(&structMap); err != nil {
+		t.Error("failed to decode struct map")
+	}
+
+	if !reflect.DeepEqual(structMap, StructMapValue) {
+		t.Errorf("expected %v, received: %v", StructMapValue, structMap)
+	}
+}
+
+func TestDecoderStructAll(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedStructAll,
+	}
+
+	decoder := NewDecoder(s)
+
+	var structAll *StructAll
+	if err := decoder.Decode(&structAll); err != nil {
+		t.Error("failed to decode struct all")
+	}
+
+	if !reflect.DeepEqual(structAll, StructAllValue) {
+		t.Errorf("expected %v, received: %v", StructAllValue, structAll)
+	}
+}
+
