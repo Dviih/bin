@@ -96,3 +96,31 @@ func (_struct *Struct) As(v interface{}) {
 	_struct.rangeStruct(_struct.fields(value))
 }
 
+func (_struct *Struct) fields(value reflect.Value) map[int]reflect.Value {
+	fields := make(map[int]reflect.Value)
+	typ := value.Type()
+
+	for i := 0; i < value.NumField(); i++ {
+		fieldType := typ.Field(i)
+
+		if !fieldType.IsExported() {
+			continue
+		}
+
+		lookup, ok := fieldType.Tag.Lookup("bin")
+		if !ok {
+			fields[i+1] = value.Field(i)
+			continue
+		}
+
+		tag, err := strconv.Atoi(lookup)
+		if err != nil {
+			continue
+		}
+
+		fields[tag] = value.Field(i)
+	}
+
+	return fields
+}
+
