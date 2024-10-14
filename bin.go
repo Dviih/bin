@@ -85,14 +85,4 @@ func Abs[T interface{}](t interface{}) T {
 	return t.(T)
 }
 
-func Marshal(v interface{}) ([]byte, error) {
-	buffer := &bytes.Buffer{}
-	encoder := NewEncoder(buffer)
-
-	if err := encoder.Encode(v); err != nil {
-		return nil, err
-	}
-
-	return buffer.Bytes(), nil
-}
 
