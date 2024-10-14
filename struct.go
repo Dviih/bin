@@ -213,3 +213,23 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 	}
 }
 
+func (_struct *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value {
+	value = Abs[reflect.Value](value)
+
+	if value.CanConvert(typ) {
+		return value.Convert(typ)
+	}
+
+	t := value.Type()
+
+	for tmp := typ; tmp.Kind() == reflect.Ptr; {
+		t = reflect.PointerTo(t)
+		tmp = tmp.Elem()
+	}
+
+	ptr := reflect.New(t).Elem()
+	Abs[reflect.Value](ptr).Set(value)
+
+	return ptr
+}
+
