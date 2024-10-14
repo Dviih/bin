@@ -386,3 +386,18 @@ func TestEncoderInterfaceSlice2(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceString(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(String)); err != nil {
+		t.Errorf("failed to encode interface string")
+	}
+
+	if string(s.Data) != string(expectedInterfaceString) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceString, s.Data)
+	}
+}
+
