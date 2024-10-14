@@ -128,6 +128,21 @@ func TestEncoderArray(t *testing.T) {
 	}
 }
 
+func TestEncoderMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Map); err != nil {
+		t.Error("failed to encode map")
+	}
+
+	if string(s.Data) != string(expectedMap) {
+		t.Errorf("expected %v, received: %v", expectedMap, s.Data)
+	}
+}
+
 func TestEncoderSlice(t *testing.T) {
 	t.Parallel()
 
