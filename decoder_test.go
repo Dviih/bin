@@ -366,6 +366,82 @@ func TestDecoderInterfaceArray(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceMap,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode map")
+	}
+
+	if !reflect.DeepEqual(i, Map) {
+		t.Errorf("expected %v, received: %v", Map, i)
+	}
+}
+
+func TestDecoderInterfaceMap2(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceMap2,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode map2")
+	}
+
+	if !reflect.DeepEqual(i, Map2) {
+		t.Errorf("expected %v, received: %v", Map2, i)
+	}
+}
+
+func TestDecoderInterfaceMap3(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceMap3,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode map3")
+	}
+
+	if !reflect.DeepEqual(i, Map3) {
+		t.Errorf("expected %v, received: %v", Map3, i)
+	}
+}
+
+func TestDecoderInterfaceMap4(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceMap4,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode map4")
+	}
+
+	if !reflect.DeepEqual(i, Map4) {
+		t.Errorf("expected %v, received: %v", Map4, i)
+	}
+}
+
 func TestDecoderInterfaceSlice(t *testing.T) {
 	t.Parallel()
 
