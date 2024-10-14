@@ -50,3 +50,38 @@ func Zero(value reflect.Value) {
 	}
 }
 
+func Abs[T interface{}](t interface{}) T {
+	switch t := t.(type) {
+	case reflect.Value:
+		for {
+			switch t.Kind() {
+			case reflect.Pointer, reflect.Interface:
+				if t.IsZero() {
+					Zero(t)
+				}
+
+				elem := t.Elem()
+
+				if elem.Kind() == reflect.Invalid {
+					return (interface{})(t).(T)
+				}
+
+				t = elem
+			default:
+				return (interface{})(t).(T)
+			}
+		}
+	case reflect.Type:
+		for {
+			switch t.Kind() {
+			case reflect.Pointer:
+				t = t.Elem()
+			default:
+				return t.(T)
+			}
+		}
+	}
+
+	return t.(T)
+}
+
