@@ -31,3 +31,11 @@ var (
 	unexpectedBehaviour = errors.New("this is a very unexpected behaviour")
 )
 
+func Value(v interface{}) reflect.Value {
+	if rv, ok := v.(reflect.Value); ok {
+		return rv
+	} else {
+		return Abs[reflect.Value](reflect.ValueOf(v))
+	}
+}
+
