@@ -347,3 +347,60 @@ func TestDecoderInterfaceBool(t *testing.T) {
 	}
 }
 
+func TestDecoderInterfaceArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceArray,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode array")
+	}
+
+	if !reflect.DeepEqual(i, Array) {
+		t.Errorf("expected %v, received: %v", Array, i)
+	}
+}
+
+func TestDecoderInterfaceSlice(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceSlice,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode slice")
+	}
+
+	if !reflect.DeepEqual(i, Slice) {
+		t.Errorf("expected %v, received: %v", Slice, i)
+	}
+}
+
+func TestDecoderInterfaceSlice2(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{
+		Data: expectedInterfaceSlice2,
+	}
+
+	decoder := NewDecoder(s)
+
+	var i interface{}
+	if err := decoder.Decode(&i); err != nil {
+		t.Error("failed to decode slice2")
+	}
+
+	if !reflect.DeepEqual(i, Slice2) {
+		t.Errorf("expected %v, received: %v", Slice2, i)
+	}
+}
+
