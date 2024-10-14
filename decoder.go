@@ -378,3 +378,9 @@ func (decoder *Decoder) _struct(value reflect.Value) error {
 	return nil
 }
 
+func NewDecoder(reader io.Reader) *Decoder {
+	return &Decoder{
+		reader: reader,
+	}
+}
+
