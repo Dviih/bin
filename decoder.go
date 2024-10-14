@@ -29,3 +29,10 @@ type Decoder struct {
 	reader io.Reader
 }
 
+func (decoder *Decoder) ReadByte() (byte, error) {
+	data := make([]byte, 1)
+	_, err := decoder.reader.Read(data)
+
+	return data[0], err
+}
+
