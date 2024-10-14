@@ -401,3 +401,76 @@ func TestEncoderInterfaceString(t *testing.T) {
 	}
 }
 
+func TestEncoderInterfaceStruct(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(Struct2)); err != nil {
+		t.Errorf("failed to encode interface struct")
+	}
+
+	if string(s.Data) != string(expectedInterfaceStruct) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStruct, s.Data)
+	}
+}
+
+func TestEncoderInterfaceStructNumbers(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(StructNumbersValue)); err != nil {
+		t.Errorf("failed to encode interface struct numbers")
+	}
+
+	if string(s.Data) != string(expectedInterfaceStructNumbers) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructNumbers, s.Data)
+	}
+}
+
+func TestEncoderInterfaceStructArray(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(StructArrayValue)); err != nil {
+		t.Errorf("failed to encode interface struct array")
+	}
+
+	if string(s.Data) != string(expectedInterfaceStructArray) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructArray, s.Data)
+	}
+}
+func TestEncoderInterfaceStructMap(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(StructMapValue)); err != nil {
+		t.Errorf("failed to encode interface struct map")
+	}
+
+	if string(s.Data) != string(expectedInterfaceStructMap) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructMap, s.Data)
+	}
+}
+
+func TestEncoderInterfaceStructAll(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(Interface(StructAllValue)); err != nil {
+		t.Errorf("failed to encode interface struct all")
+	}
+
+	if string(s.Data) != string(expectedInterfaceStructAll) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructAll, s.Data)
+	}
+}
