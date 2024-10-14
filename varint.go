@@ -24,3 +24,11 @@ import (
 	"io"
 )
 
+func VarIntIn[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](writer io.Writer, t T) error {
+	if _, err := writer.Write(binary.AppendUvarint(nil, uint64(t))); err != nil {
+		return err
+	}
+
+	return nil
+}
+
