@@ -29,3 +29,7 @@ type Struct struct {
 	m map[int]reflect.Value
 }
 
+func (_struct *Struct) Map() map[interface{}]interface{} {
+	return _struct._map(reflect.ValueOf(_struct.m))
+}
+
