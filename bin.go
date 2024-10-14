@@ -19,3 +19,9 @@
 
 package bin
 
+import (
+	"bytes"
+	"errors"
+	"reflect"
+)
+
