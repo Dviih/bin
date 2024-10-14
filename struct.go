@@ -33,3 +33,37 @@ func (_struct *Struct) Map() map[interface{}]interface{} {
 	return _struct._map(reflect.ValueOf(_struct.m))
 }
 
+func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
+	m := make(map[interface{}]interface{})
+
+	r := old.MapRange()
+
+	for r.Next() {
+		switch v := r.Value().Interface().(type) {
+		case Struct:
+			m[r.Key().Interface()] = v.Map()
+		case map[interface{}]interface{}:
+			m[r.Key().Interface()] = _struct._map(r.Value())
+		case reflect.Value:
+			v = Abs[reflect.Value](v)
+
+			if v.Kind() == reflect.Struct && v.Type() == reflect.TypeFor[Struct]() {
+				s := v.Interface().(Struct)
+				m[r.Key().Interface()] = s.Map()
+				continue
+			}
+
+			if v.Kind() == reflect.Map {
+				m[r.Key().Interface()] = _struct._map(v)
+				continue
+			}
+
+			m[r.Key().Interface()] = v.Interface()
+		default:
+			m[r.Key().Interface()] = v
+		}
+	}
+
+	return m
+}
+
