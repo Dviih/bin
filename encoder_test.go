@@ -158,3 +158,18 @@ func TestEncoderSlice(t *testing.T) {
 	}
 }
 
+func TestEncoderString(t *testing.T) {
+	t.Parallel()
+
+	s := &stream{}
+	encoder := NewEncoder(s)
+
+	if err := encoder.Encode(String); err != nil {
+		t.Error("failed to encode string")
+	}
+
+	if string(s.Data) != string(expectedString) {
+		t.Errorf("expected %v, received: %v", expectedString, s.Data)
+	}
+}
+
