@@ -95,3 +95,14 @@ func Marshal(v interface{}) ([]byte, error) {
 
 	return buffer.Bytes(), nil
 }
+
+func Unmarshal[T interface{}](data []byte) (T, error) {
+	var t T
+
+	if err := NewDecoder(bytes.NewReader(data)).Decode(&t); err != nil {
+		var zero T
+		return zero, err
+	}
+
+	return t, nil
+}
