@@ -233,3 +233,11 @@ func (_struct *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value 
 	return ptr
 }
 
+func (_struct *Struct) Sub(i int, v interface{}) {
+	s, ok := _struct.Get(i)
+	if !ok {
+		return
+	}
+
+	s.(*Struct).As(&v)
+}
