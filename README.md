@@ -36,6 +36,7 @@
 - `_map` - Takes an `interface{}` of a map and deference it, returns `map[interface{}]interface{}`
 - `fields` - Takes a struct and map its fields by their tag, returns `map[tag]field`
 - `rangeFields` - Takes `fields` map and check the values if possible to set, converting if required, if not continue.
+- `ptr` - Matches the `reflect.Value` of the field.
 
 ---
 
