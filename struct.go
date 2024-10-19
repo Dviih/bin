@@ -208,7 +208,7 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 
 			fields[k].Set(tmp)
 		default:
-			fields[k].Set(v)
+			fields[k].Set(v.Convert(fields[k].Type()))
 		}
 	}
 }
