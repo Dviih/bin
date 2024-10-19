@@ -172,6 +172,11 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 			fields[k].Set(m)
 			continue
 		case reflect.Struct:
+			if fields[k].Kind() == reflect.Interface {
+				fields[k].Set(_struct.m[k])
+				continue
+			}
+
 			s, ok := _struct.Get(k)
 			if !ok {
 				continue
