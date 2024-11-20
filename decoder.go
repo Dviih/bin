@@ -185,7 +185,11 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			}
 
 			return nil
+		if t.Kind() == reflect.Struct {
+			return decoder.structs(value)
 		}
+
+		ptr := reflect.New(t).Elem()
 
 		if err = decoder.Decode(ptr); err != nil {
 			return err
@@ -281,7 +285,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 	return Invalid
 }
 
-func (decoder *Decoder) _struct(value reflect.Value) error {
+func (decoder *Decoder) structs(value reflect.Value) error {
 	size, err := VarIntOut[int](decoder)
 	if err != nil {
 		return err

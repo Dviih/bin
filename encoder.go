@@ -133,7 +133,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 				return nil
 			}
 
-			return encoder._struct(value, true)
+			return encoder.structs(value, true)
 		default:
 		}
 
@@ -179,14 +179,14 @@ func (encoder *Encoder) Encode(v interface{}) error {
 			return err
 		}
 	case reflect.Struct:
-		return encoder._struct(value, false)
+		return encoder.structs(value, false)
 	}
 
 	return nil
 }
 
-func (encoder *Encoder) _struct(value reflect.Value, kind bool) error {
 	typ := value.Type()
+func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 	for i := 0; i < value.NumField(); i++ {
 		fieldType := typ.Field(i)
