@@ -134,66 +134,19 @@ func (decoder *Decoder) Decode(v interface{}) error {
 	case reflect.Chan, reflect.Func:
 		return nil
 	case reflect.Interface:
-		kind, err := decoder.ReadByte()
 		if value.Kind() == reflect.Invalid {
 			return nil
 		}
 
+		t, err := decoder.getType()
 		if err != nil {
 			return err
 		}
 
-		var ptr reflect.Value
-
-		switch reflect.Kind(kind) {
-		case reflect.Invalid, reflect.Uintptr, reflect.Chan, reflect.Func, reflect.Pointer, reflect.UnsafePointer:
+		if t == nil {
 			return nil
-		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
-			ptr = reflect.New(typeFromKind(kind)).Elem()
-		case reflect.Array:
-			typ, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
+		}
 
-			size, err := VarIntOut[int](decoder)
-			if err != nil {
-				return err
-			}
-
-			ptr = reflect.New(reflect.ArrayOf(size, typeFromKind(typ))).Elem()
-		case reflect.Slice:
-			typ, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			ptr = reflect.New(reflect.SliceOf(typeFromKind(typ))).Elem()
-		case reflect.Map:
-			mk, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			mv, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			if mv == 25 {
-				ptr = reflect.New(reflect.MapOf(typeFromKind(mk), reflect.TypeFor[*Struct]())).Elem()
-				return decoder.Decode(ptr)
-			}
-
-			ptr = reflect.New(reflect.MapOf(typeFromKind(mk), typeFromKind(mv))).Elem()
-		case reflect.Interface:
-			return unexpectedBehaviour
-		case reflect.Struct:
-			if err = decoder._struct(value); err != nil {
-				return err
-			}
-
-			return nil
 		if t.Kind() == reflect.Struct {
 			return decoder.structs(value)
 		}
@@ -312,77 +265,23 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 			return err
 		}
 
-		fk, err := decoder.ReadByte()
+		t, err := decoder.getType()
 		if err != nil {
 			return err
 		}
 
-		switch reflect.Kind(fk) {
-		case reflect.Array:
-			ak, err := decoder.ReadByte()
-			if err != nil {
+		var ptr reflect.Value
+
+		if t.Kind() == reflect.Struct {
+			ptr = reflect.New(reflect.TypeFor[interface{}]()).Elem()
+			if err = decoder.structs(ptr); err != nil {
 				return err
 			}
-
-			as, err := VarIntOut[int](decoder)
-			if err != nil {
+		} else {
+			ptr = reflect.New(t).Elem()
+			if err = decoder.Decode(ptr); err != nil {
 				return err
 			}
-
-			tmp := reflect.New(reflect.ArrayOf(as, typeFromKind(ak))).Elem()
-			if err = decoder.Decode(tmp); err != nil {
-				return err
-			}
-
-			s.m[tag] = tmp
-			continue
-		case reflect.Map:
-			mk, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			mv, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			tmp := reflect.New(reflect.MapOf(typeFromKind(mk), typeFromKind(mv))).Elem()
-			if err = decoder.Decode(tmp); err != nil {
-				return err
-			}
-
-			s.m[tag] = tmp
-			continue
-		case reflect.Slice:
-			sk, err := decoder.ReadByte()
-			if err != nil {
-				return err
-			}
-
-			tmp := reflect.New(reflect.SliceOf(typeFromKind(sk))).Elem()
-			if err = decoder.Decode(tmp); err != nil {
-				return err
-			}
-
-			s.m[tag] = tmp
-			continue
-		case reflect.Struct:
-			ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
-
-			if err = decoder._struct(ptr); err != nil {
-				return nil
-			}
-
-			s.m[tag] = ptr
-			continue
-		default:
-		}
-
-		ptr := reflect.New(typeFromKind(fk)).Elem()
-
-		if err = decoder.Decode(ptr); err != nil {
-			return err
 		}
 
 		s.m[tag] = ptr
