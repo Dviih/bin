@@ -72,3 +72,17 @@ func isMixed(t reflect.Type) bool {
 	}
 }
 
+func fromDepth(t reflect.Type, d int, di []int) reflect.Type {
+	slices.Reverse(di)
+
+	for i := 0; i < d; i++ {
+		if di == nil || di[i] == 0 {
+			t = reflect.SliceOf(t)
+			continue
+		}
+
+		t = reflect.ArrayOf(di[i], t)
+	}
+
+	return t
+}
