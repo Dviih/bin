@@ -29,11 +29,11 @@ type Struct struct {
 	m map[int]reflect.Value
 }
 
-func (_struct *Struct) Map() map[interface{}]interface{} {
-	return _struct._map(reflect.ValueOf(_struct.m))
+func (structs *Struct) Map() map[interface{}]interface{} {
+	return structs.maps(reflect.ValueOf(structs.m))
 }
 
-func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
+func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 	m := make(map[interface{}]interface{})
 
 	r := old.MapRange()
@@ -43,7 +43,7 @@ func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
 		case Struct:
 			m[r.Key().Interface()] = v.Map()
 		case map[interface{}]interface{}:
-			m[r.Key().Interface()] = _struct._map(r.Value())
+			m[r.Key().Interface()] = structs.maps(r.Value())
 		case reflect.Value:
 			v = Abs[reflect.Value](v)
 
@@ -54,7 +54,7 @@ func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
 			}
 
 			if v.Kind() == reflect.Map {
-				m[r.Key().Interface()] = _struct._map(v)
+				m[r.Key().Interface()] = structs.maps(v)
 				continue
 			}
 
@@ -67,8 +67,8 @@ func (_struct *Struct) _map(old reflect.Value) map[interface{}]interface{} {
 	return m
 }
 
-func (_struct *Struct) Get(i int) (interface{}, bool) {
-	v, ok := _struct.m[i]
+func (structs *Struct) Get(i int) (interface{}, bool) {
+	v, ok := structs.m[i]
 	if !ok {
 		return nil, false
 	}
@@ -76,7 +76,7 @@ func (_struct *Struct) Get(i int) (interface{}, bool) {
 	return v.Interface(), true
 }
 
-func (_struct *Struct) As(v interface{}) {
+func (structs *Struct) As(v interface{}) {
 	var value reflect.Value
 
 	if rv, ok := v.(reflect.Value); ok {
@@ -93,10 +93,10 @@ func (_struct *Struct) As(v interface{}) {
 		value = Abs[reflect.Value](value)
 	}
 
-	_struct.rangeStruct(_struct.fields(value))
+	structs.ranges(structs.fields(value))
 }
 
-func (_struct *Struct) fields(value reflect.Value) map[int]reflect.Value {
+func (structs *Struct) fields(value reflect.Value) map[int]reflect.Value {
 	fields := make(map[int]reflect.Value)
 	typ := value.Type()
 
@@ -124,8 +124,8 @@ func (_struct *Struct) fields(value reflect.Value) map[int]reflect.Value {
 	return fields
 }
 
-func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
-	for k, v := range _struct.m {
+func (structs *Struct) ranges(fields map[int]reflect.Value) {
+	for k, v := range structs.m {
 		if _, ok := fields[k]; !ok {
 			continue
 		}
@@ -152,7 +152,7 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 						s := key.Interface().(*Struct)
 
 						key = reflect.New(typ.Elem()).Elem()
-						s.rangeStruct(s.fields(key))
+						s.ranges(s.fields(key))
 					}
 				}
 
@@ -162,7 +162,7 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 						s := value.Interface().(*Struct)
 
 						value = reflect.New(typ.Elem()).Elem()
-						s.rangeStruct(s.fields(value))
+						s.ranges(s.fields(value))
 					}
 				}
 
@@ -173,19 +173,19 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 			continue
 		case reflect.Struct:
 			if fields[k].Kind() == reflect.Interface {
-				fields[k].Set(_struct.m[k])
+				fields[k].Set(structs.m[k])
 				continue
 			}
 
-			s, ok := _struct.Get(k)
+			s, ok := structs.Get(k)
 			if !ok {
 				continue
 			}
 
 			Zero(fields[k])
 			s.(*Struct).As(Abs[reflect.Value](fields[k]))
-		case reflect.Slice:
-			typ := fields[k].Type().Elem()
+		case reflect.Array, reflect.Slice:
+			typ := Abs[reflect.Type](fields[k].Type())
 			kind := typ.Kind()
 
 			if kind == reflect.Pointer {
@@ -218,7 +218,7 @@ func (_struct *Struct) rangeStruct(fields map[int]reflect.Value) {
 	}
 }
 
-func (_struct *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value {
+func (structs *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value {
 	value = Abs[reflect.Value](value)
 
 	if value.CanConvert(typ) {
@@ -238,8 +238,8 @@ func (_struct *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value 
 	return ptr
 }
 
-func (_struct *Struct) Sub(i int, v interface{}) {
-	s, ok := _struct.Get(i)
+func (structs *Struct) Sub(i int, v interface{}) {
+	s, ok := structs.Get(i)
 	if !ok {
 		return
 	}
