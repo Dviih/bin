@@ -24,3 +24,33 @@ import (
 	"slices"
 )
 
+func depth(value reflect.Value) (reflect.Type, int, bool, []int) {
+	i := 0
+	t := value.Type()
+
+	var di []int
+	mixed := isMixed(t)
+
+	for {
+		switch t.Kind() {
+		case reflect.Array:
+			di = append(di, t.Len())
+
+			i++
+			t = t.Elem()
+		case reflect.Slice:
+			if mixed {
+				di = append(di, 0)
+			} else {
+				di = append(di, value.Len())
+			}
+
+			i++
+			value = value.Index(0)
+			t = t.Elem()
+		default:
+			return t, i, mixed, di
+		}
+	}
+}
+
