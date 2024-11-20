@@ -201,18 +201,11 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 		field := Abs[reflect.Value](value.Field(i))
 
 		if kind {
-			switch field.Kind() {
-			case reflect.Array, reflect.Map, reflect.Slice, reflect.Struct:
-				if err := encoder.Encode(Interface(field.Interface())); err != nil {
-					return err
-				}
-				continue
-			default:
-			}
-
-			if err := encoder.Encode(field.Kind()); err != nil {
+			if err := encoder.Encode(Interface(field.Interface())); err != nil {
 				return err
 			}
+
+			continue
 		}
 
 		if err := encoder.Encode(field); err != nil {
