@@ -239,6 +239,75 @@ func (encoder *Encoder) _struct(value reflect.Value, kind bool) error {
 	return nil
 }
 
+func (encoder *Encoder) getType(value reflect.Value) error {
+	switch value.Type().Kind() {
+	case reflect.Array:
+		dt, d, mixed, di := depth(value)
+
+		if err := encoder.Encode(d); err != nil {
+			return err
+		}
+
+		if err := encoder.Encode(mixed); err != nil {
+			return err
+		}
+
+		for i := 0; i < len(di); i++ {
+			if err := encoder.Encode(di[i]); err != nil {
+				return err
+			}
+		}
+
+		if err := encoder.Encode(dt.Kind()); err != nil {
+			return err
+		}
+
+		return nil
+	case reflect.Slice:
+		dt, d, mixed, di := depth(value)
+
+		if err := encoder.Encode(d); err != nil {
+			return err
+		}
+
+		if err := encoder.Encode(mixed); err != nil {
+			return err
+		}
+
+		if mixed {
+			for i := 0; i < len(di); i++ {
+				if err := encoder.Encode(di[i]); err != nil {
+					return err
+				}
+			}
+		}
+
+		if err := encoder.Encode(dt.Kind()); err != nil {
+			return err
+		}
+
+		return nil
+	case reflect.Map:
+		if err := encoder.Encode(value.Type().Key().Kind()); err != nil {
+			return err
+		}
+
+		if err := encoder.Encode(value.Type().Elem().Kind()); err != nil {
+			return err
+		}
+
+		return nil
+	case reflect.Struct:
+		if err := encoder.Encode(value.Type().NumField()); err != nil {
+			return nil
+		}
+
+		return nil
+	default:
+		return nil
+	}
+}
+
 func NewEncoder(writer io.Writer) *Encoder {
 	return &Encoder{writer: writer}
 }
