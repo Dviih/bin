@@ -43,6 +43,11 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return CantSet
 	}
 
+	if v == nil {
+		value.SetZero()
+		return nil
+	}
+
 	switch value.Kind() {
 	case reflect.Invalid, reflect.Uintptr, reflect.UnsafePointer:
 		value.SetZero()
@@ -130,6 +135,10 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return nil
 	case reflect.Interface:
 		kind, err := decoder.ReadByte()
+		if value.Kind() == reflect.Invalid {
+			return nil
+		}
+
 		if err != nil {
 			return err
 		}
