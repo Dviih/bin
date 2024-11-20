@@ -198,3 +198,18 @@ func TestUnmarshal(t *testing.T) {
 		return
 	}
 }
+
+func BenchmarkEncode(b *testing.B) {
+	s := &stream{}
+
+	b.ResetTimer()
+	if err := NewEncoder(s).Encode(StructAllValue); err != nil {
+		b.Error("failed to encode (bench)")
+	}
+	b.StopTimer()
+
+	if string(s.Data) != string(expectedStructAll) {
+		b.Error("not equal (bench)")
+	}
+}
+
