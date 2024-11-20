@@ -108,29 +108,13 @@ func (encoder *Encoder) Encode(v interface{}) error {
 		}
 
 		switch value.Kind() {
-		case reflect.Array:
-			if err := encoder.Encode(Abs[reflect.Type](value.Type().Elem()).Kind()); err != nil {
-				return err
-			}
-
-			if err := encoder.Encode(value.Len()); err != nil {
-				return err
-			}
-		case reflect.Slice:
-			if err := encoder.Encode(value.Type().Elem().Kind()); err != nil {
-				return err
-			}
-		case reflect.Map:
-			if err := encoder.Encode(value.Type().Key().Kind()); err != nil {
-				return err
-			}
-
-			if err := encoder.Encode(value.Type().Elem().Kind()); err != nil {
+		case reflect.Array, reflect.Slice, reflect.Map:
+			if err := encoder.getType(value); err != nil {
 				return err
 			}
 		case reflect.Struct:
-			if err := encoder.Encode(value.NumField()); err != nil {
-				return nil
+			if err := encoder.getType(value); err != nil {
+				return err
 			}
 
 			return encoder.structs(value, true)
@@ -185,11 +169,11 @@ func (encoder *Encoder) Encode(v interface{}) error {
 	return nil
 }
 
-	typ := value.Type()
 func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
+	t := value.Type()
 
 	for i := 0; i < value.NumField(); i++ {
-		fieldType := typ.Field(i)
+		fieldType := t.Field(i)
 
 		if !fieldType.IsExported() {
 			continue
