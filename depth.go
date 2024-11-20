@@ -54,3 +54,21 @@ func depth(value reflect.Value) (reflect.Type, int, bool, []int) {
 	}
 }
 
+func isMixed(t reflect.Type) bool {
+	pt := t
+
+	for {
+		switch t.Elem().Kind() {
+		case reflect.Array, reflect.Slice:
+			if t.Elem().Kind() == pt.Kind() {
+				pt = t
+				t = t.Elem()
+				continue
+			}
+			return true
+		default:
+			return false
+		}
+	}
+}
+
