@@ -296,47 +296,24 @@ func NewDecoder(reader io.Reader) *Decoder {
 	}
 }
 
-func typeFromKind[T byte | reflect.Kind](kind T) reflect.Type {
 	switch reflect.Kind(kind) {
-	case reflect.Invalid, reflect.Interface:
-		return reflect.TypeFor[interface{}]()
 	case reflect.Bool:
-		return reflect.TypeFor[bool]()
 	case reflect.Int:
-		return reflect.TypeFor[int]()
 	case reflect.Int8:
-		return reflect.TypeFor[int8]()
 	case reflect.Int16:
-		return reflect.TypeFor[int16]()
 	case reflect.Int32:
-		return reflect.TypeFor[int32]()
 	case reflect.Int64:
-		return reflect.TypeFor[int64]()
 	case reflect.Uint:
-		return reflect.TypeFor[uint]()
 	case reflect.Uint8:
-		return reflect.TypeFor[uint8]()
 	case reflect.Uint16:
-		return reflect.TypeFor[uint16]()
 	case reflect.Uint32:
-		return reflect.TypeFor[uint32]()
 	case reflect.Uint64:
-		return reflect.TypeFor[uint64]()
 	case reflect.Uintptr:
-		return reflect.TypeFor[uintptr]()
 	case reflect.Float32:
-		return reflect.TypeFor[float32]()
 	case reflect.Float64:
-		return reflect.TypeFor[float64]()
 	case reflect.Complex64:
-		return reflect.TypeFor[complex64]()
 	case reflect.Complex128:
-		return reflect.TypeFor[complex128]()
 	case reflect.String:
-		return reflect.TypeFor[string]()
-	case reflect.Array, reflect.Chan, reflect.Func, reflect.Map, reflect.Pointer, reflect.Slice, reflect.Struct, reflect.UnsafePointer:
-		return nil
 	}
 
-	return nil
 }
