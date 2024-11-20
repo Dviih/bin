@@ -213,3 +213,23 @@ func BenchmarkEncode(b *testing.B) {
 	}
 }
 
+func BenchmarkDecode(b *testing.B) {
+	s := &stream{
+		Data: expectedStructAll,
+	}
+
+	var i interface{}
+	_ = i
+	var sa *StructAll
+
+	b.ResetTimer()
+	if err := NewDecoder(s).Decode(&sa); err != nil {
+		b.Error("failed to decode (bench)")
+	}
+
+	b.StopTimer()
+
+	if !reflect.DeepEqual(sa, StructAllValue) {
+		b.Error("not equal (bench)")
+	}
+}
