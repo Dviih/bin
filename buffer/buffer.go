@@ -120,3 +120,9 @@ func New() *Buffer {
 	}
 }
 
+func From(data []byte) *Buffer {
+	return &Buffer{
+		data: data,
+		Max:  len(data),
+	}
+}
