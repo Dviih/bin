@@ -114,6 +114,10 @@ func _interface(value reflect.Value) reflect.Value {
 		tmp := reflect.New(reflect.StructOf(fields)).Elem()
 
 		for i, v := range values {
+			if v.Kind() == reflect.Struct {
+				v = _interface(v)
+			}
+
 			tmp.Field(i).Set(v)
 		}
 
