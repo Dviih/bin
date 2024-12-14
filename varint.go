@@ -36,7 +36,7 @@ func VarIntIn[T Integer](writer io.Writer, t T) error {
 	return nil
 }
 
-func VarIntOut[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](reader io.ByteReader) (T, error) {
+func VarIntOut[T Integer](reader io.ByteReader) (T, error) {
 	t, err := binary.ReadUvarint(reader)
 	if err != nil {
 		return 0, err
