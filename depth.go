@@ -46,7 +46,10 @@ func depth(value reflect.Value) (reflect.Type, int, bool, []int) {
 			}
 
 			i++
-			value = value.Index(0)
+			if value.Len() > 0 {
+				value = value.Index(0)
+			}
+
 			t = t.Elem()
 		default:
 			return t, i, mixed, di
