@@ -114,3 +114,9 @@ func (buffer *Buffer) Slice(start, end int) *Buffer {
 	}
 }
 
+func New() *Buffer {
+	return &Buffer{
+		Max: MaxSize,
+	}
+}
+
