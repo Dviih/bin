@@ -1,5 +1,5 @@
 /*
- *     A tiny format for using binary data
+ *     A tiny binary format
  *     Copyright (C) 2024  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
