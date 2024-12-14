@@ -62,3 +62,12 @@ func (buffer *Buffer) Read(data []byte) (int, error) {
 	return n, nil
 }
 
+func (buffer *Buffer) ReadByte() (byte, error) {
+	if buffer.read >= int64(len(buffer.data)) {
+		return 0, io.EOF
+	}
+
+	buffer.read++
+	return buffer.data[buffer.read-1], nil
+}
+
