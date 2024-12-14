@@ -71,3 +71,30 @@ func (buffer *Buffer) ReadByte() (byte, error) {
 	return buffer.data[buffer.read-1], nil
 }
 
+func (buffer *Buffer) Seek(offset int64, whence int) (int64, error) {
+	switch whence {
+	case io.SeekStart:
+		if buffer.read < offset {
+			return 0, InvalidOffset
+		}
+
+		buffer.read = offset
+	case io.SeekCurrent:
+		if buffer.read+offset > int64(len(buffer.data)) {
+			return 0, InvalidOffset
+		}
+
+		buffer.read += offset
+	case io.SeekEnd:
+		if buffer.read+offset > int64(len(buffer.data)) {
+			return 0, InvalidOffset
+		}
+
+		buffer.read = int64(len(buffer.data)) - offset
+	default:
+		return 0, InvalidWhence
+	}
+
+	return buffer.read, nil
+}
+
