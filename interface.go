@@ -60,6 +60,35 @@ func _interface(value reflect.Value) reflect.Value {
 		}
 
 		return value.Convert(reflect.TypeFor[interface{}]())
+	case reflect.Map:
+		kt, vt := KeyElem(value)
+
+		kb := kt.Kind() == reflect.Struct
+		vb := vt.Kind() == reflect.Struct
+
+		if !kb && !vb {
+			return value.Convert(reflect.TypeFor[interface{}]())
+		}
+
+		ptr := reflect.MakeMapWithSize(reflect.MapOf(reflect.TypeFor[interface{}](), reflect.TypeFor[interface{}]()), value.Len())
+
+		m := value.MapRange()
+
+		for m.Next() {
+			k, v := m.Key(), m.Value()
+
+			if kb {
+				k = _interface(k)
+			}
+
+			if vb {
+				v = _interface(v)
+			}
+
+			ptr.SetMapIndex(k, v)
+		}
+
+		return ptr.Convert(reflect.TypeFor[interface{}]())
 	case reflect.Struct:
 		var fields []reflect.StructField
 		var values []reflect.Value
