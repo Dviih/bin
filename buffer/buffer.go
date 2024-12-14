@@ -102,3 +102,7 @@ func (buffer *Buffer) Data() []byte {
 	return buffer.data[:]
 }
 
+func (buffer *Buffer) Len() int {
+	return len(buffer.data)
+}
+
