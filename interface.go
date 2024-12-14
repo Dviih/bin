@@ -121,7 +121,10 @@ func _interface(value reflect.Value) reflect.Value {
 			tmp.Field(i).Set(v)
 		}
 
-		return tmp
+		ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
+		ptr.Set(tmp)
+
+		return ptr
 	default:
 		return value.Convert(reflect.TypeFor[interface{}]())
 	}
