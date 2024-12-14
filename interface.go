@@ -36,8 +36,6 @@ func Interface(v interface{}) reflect.Value {
 
 func _interface(value reflect.Value) reflect.Value {
 	switch value.Kind() {
-	case reflect.Array, reflect.Map, reflect.Slice:
-		return value
 	case reflect.Struct:
 		var fields []reflect.StructField
 		var values []reflect.Value
