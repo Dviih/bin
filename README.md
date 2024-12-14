@@ -1,6 +1,7 @@
 # Bin
 
-## A format for binary data, like protobuf
+## A tiny binary format
+##### This project is licensed under [AGPL](https://github.com/Dviih/bin/blob/main/LICENSE).
 
 ---
 
