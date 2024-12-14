@@ -240,6 +240,23 @@ func (structs *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value 
 	return ptr
 }
 
+func (structs *Struct) convert(t reflect.Type, value reflect.Value) reflect.Value {
+	if value.CanConvert(t) {
+		return value.Convert(t)
+	}
+
+	if Abs[reflect.Type](t) == Abs[reflect.Type](value.Type()) {
+		return structs.ptr(t, value)
+	}
+
+	abs := Abs[reflect.Value](value)
+	if abs.CanConvert(t) {
+		return abs.Convert(t)
+	}
+
+	return value
+}
+
 func (structs *Struct) Sub(i int, v interface{}) {
 	s, ok := structs.Get(i)
 	if !ok {
