@@ -40,3 +40,13 @@ var (
 	InvalidWhence = errors.New("invalid whence")
 )
 
+func (buffer *Buffer) Write(data []byte) (int, error) {
+	if len(buffer.data)+len(data) > buffer.Max {
+		data = data[:buffer.Max-len(buffer.data)]
+	}
+
+	buffer.data = append(buffer.data, data...)
+
+	return len(data), nil
+}
+
