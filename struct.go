@@ -171,6 +171,7 @@ func (structs *Struct) ranges(fields map[int]reflect.Value) {
 
 			fields[k].Set(m)
 		switch field.Kind() {
+		case reflect.Invalid, reflect.Uintptr, reflect.Pointer, reflect.UnsafePointer, reflect.Chan, reflect.Func:
 			continue
 		case reflect.Struct:
 			if fields[k].Kind() == reflect.Interface {
