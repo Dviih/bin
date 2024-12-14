@@ -220,13 +220,7 @@ func (structs *Struct) ranges(fields map[int]reflect.Value) {
 	}
 }
 
-func (structs *Struct) ptr(value reflect.Value, typ reflect.Type) reflect.Value {
-	value = Abs[reflect.Value](value)
-
-	if value.CanConvert(typ) {
-		return value.Convert(typ)
-	}
-
+func (structs *Struct) ptr(typ reflect.Type, value reflect.Value) reflect.Value {
 	t := value.Type()
 
 	for tmp := typ; tmp.Kind() == reflect.Ptr; {
