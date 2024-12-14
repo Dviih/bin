@@ -28,6 +28,13 @@ const (
 	MaxSize = (1 << 31) - 1
 )
 
+type Buffer struct {
+	data []byte
+	read int64
+
+	Max int
+}
+
 var (
 	InvalidOffset = errors.New("invalid offset")
 	InvalidWhence = errors.New("invalid whence")
