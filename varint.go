@@ -25,6 +25,9 @@ import (
 )
 
 func VarIntIn[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64](writer io.Writer, t T) error {
+type Integer = interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
 	if _, err := writer.Write(binary.AppendUvarint(nil, uint64(t))); err != nil {
 		return err
 	}
