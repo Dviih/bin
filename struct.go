@@ -131,9 +131,8 @@ func (structs *Struct) ranges(fields map[int]reflect.Value) {
 			continue
 		}
 
-		v = Abs[reflect.Value](v)
+		field = Abs[reflect.Value](field)
 
-		switch v.Kind() {
 		case reflect.Map:
 			if fields[k].Type() == v.Type() {
 				fields[k].Set(v)
@@ -171,6 +170,7 @@ func (structs *Struct) ranges(fields map[int]reflect.Value) {
 			}
 
 			fields[k].Set(m)
+		switch field.Kind() {
 			continue
 		case reflect.Struct:
 			if fields[k].Kind() == reflect.Interface {
