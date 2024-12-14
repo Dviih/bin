@@ -106,3 +106,11 @@ func (buffer *Buffer) Len() int {
 	return len(buffer.data)
 }
 
+func (buffer *Buffer) Slice(start, end int) *Buffer {
+	return &Buffer{
+		data: buffer.data[start:end],
+		read: buffer.read - int64(start),
+		Max:  buffer.Max,
+	}
+}
+
