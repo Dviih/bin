@@ -24,3 +24,7 @@ import (
 	"io"
 )
 
+const (
+	MaxSize = (1 << 31) - 1
+)
+
