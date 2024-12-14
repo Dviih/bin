@@ -98,3 +98,7 @@ func (buffer *Buffer) Seek(offset int64, whence int) (int64, error) {
 	return buffer.read, nil
 }
 
+func (buffer *Buffer) Data() []byte {
+	return buffer.data[:]
+}
+
