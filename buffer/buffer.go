@@ -28,3 +28,8 @@ const (
 	MaxSize = (1 << 31) - 1
 )
 
+var (
+	InvalidOffset = errors.New("invalid offset")
+	InvalidWhence = errors.New("invalid whence")
+)
+
