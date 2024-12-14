@@ -141,16 +141,12 @@ func (structs *Struct) ranges(fields map[int]reflect.Value) {
 		case reflect.Interface:
 			field.Set(m)
 		case reflect.Struct:
-			if fields[k].Kind() == reflect.Interface {
-				fields[k].Set(structs.m[k])
-				continue
-			}
-
-			s, ok := structs.Get(k)
+			s, ok := m.Interface().(*Struct)
 			if !ok {
 				continue
 			}
 
+			s.As(field)
 		}
 	}
 }
