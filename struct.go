@@ -125,8 +125,9 @@ func (structs *Struct) fields(value reflect.Value) map[int]reflect.Value {
 }
 
 func (structs *Struct) ranges(fields map[int]reflect.Value) {
-	for k, v := range structs.m {
-		if _, ok := fields[k]; !ok {
+	for i, field := range fields {
+		m, ok := structs.m[i]
+		if !ok {
 			continue
 		}
 
