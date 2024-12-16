@@ -20,8 +20,8 @@
 package bin
 
 import (
-	"bytes"
 	"errors"
+	"github.com/Dviih/bin/buffer"
 	"reflect"
 )
 
@@ -106,20 +106,20 @@ func KeyElem(value reflect.Value) (reflect.Type, reflect.Type) {
 }
 
 func Marshal(v interface{}) ([]byte, error) {
-	buffer := &bytes.Buffer{}
-	encoder := NewEncoder(buffer)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(v); err != nil {
 		return nil, err
 	}
 
-	return buffer.Bytes(), nil
+	return b.Data(), nil
 }
 
 func Unmarshal[T interface{}](data []byte) (T, error) {
 	var t T
 
-	if err := NewDecoder(bytes.NewReader(data)).Decode(&t); err != nil {
+	if err := NewDecoder(buffer.From(data)).Decode(&t); err != nil {
 		var zero T
 		return zero, err
 	}
