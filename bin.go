@@ -126,3 +126,13 @@ func Unmarshal[T interface{}](data []byte) (T, error) {
 
 	return t, nil
 }
+
+func UnmarshalAs[T interface{}](data []byte) (T, error) {
+	i, err := Unmarshal[interface{}](data)
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+
+	return As[T](i), nil
+}
