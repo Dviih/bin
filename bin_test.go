@@ -24,23 +24,6 @@ import (
 	"testing"
 )
 
-type stream struct {
-	Data []byte
-	read int
-}
-
-func (stream *stream) Write(data []byte) (int, error) {
-	stream.Data = append(stream.Data, data...)
-	return len(data), nil
-}
-
-func (stream *stream) Read(data []byte) (int, error) {
-	i := copy(data, stream.Data[stream.read:stream.read+len(data)])
-	stream.read += len(data)
-
-	return i, nil
-}
-
 type Struct1 struct {
 	FieldOne string `bin:"100"`
 	FieldTwo uint64 `bin:"200"`
