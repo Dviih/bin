@@ -41,6 +41,12 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return CantSet
 	}
 
+	switch value.Type() {
+	case reflect.TypeFor[*Struct]():
+		Zero(value)
+		return decoder.structs(value)
+	}
+
 	if v == nil {
 		value.SetZero()
 		return nil
@@ -424,7 +430,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 		return reflect.MapOf(key, value), nil
 	case reflect.Struct:
-		return reflect.TypeFor[struct{}](), nil
+		return reflect.TypeFor[*Struct](), nil
 	case reflect.Chan, reflect.Func, reflect.Pointer, reflect.UnsafePointer:
 		return nil, nil
 	}

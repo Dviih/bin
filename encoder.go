@@ -103,20 +103,24 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
-		if err := encoder.Encode(value.Kind()); err != nil {
+		if err := encoder.getType(value); err != nil {
 			return err
 		}
 
 		switch value.Kind() {
 		case reflect.Array, reflect.Slice, reflect.Map:
-			if err := encoder.getType(value); err != nil {
-				return err
+			switch value.Type().Elem().Kind() {
+			case reflect.Struct:
+				for i := 0; i < value.Len(); i++ {
+					if err := encoder.Encode(_interface(value.Index(i))); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			default:
 			}
 		case reflect.Struct:
-			if err := encoder.getType(value); err != nil {
-				return err
-			}
-
 			return encoder.structs(value, true)
 		default:
 		}
@@ -173,6 +177,11 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 	t := value.Type()
 
 	for i := 0; i < value.NumField(); i++ {
+		field := Abs[reflect.Value](value.Field(i))
+		if field.IsZero() {
+			continue
+		}
+
 		fieldType := t.Field(i)
 
 		if !fieldType.IsExported() {
@@ -198,8 +207,6 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 			return err
 		}
 
-		field := Abs[reflect.Value](value.Field(i))
-
 		if kind {
 			if err := encoder.Encode(Interface(field.Interface())); err != nil {
 				return err
@@ -217,6 +224,10 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 }
 
 func (encoder *Encoder) getType(value reflect.Value) error {
+	if err := encoder.Encode(value.Type().Kind()); err != nil {
+		return err
+	}
+
 	switch value.Type().Kind() {
 	case reflect.Array:
 		dt, d, mixed, di := depth(value)
@@ -265,17 +276,25 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 
 		return nil
 	case reflect.Map:
-		if err := encoder.Encode(value.Type().Key().Kind()); err != nil {
+		if err := encoder.getType(reflect.New(value.Type().Key()).Elem()); err != nil {
 			return err
 		}
 
-		if err := encoder.Encode(value.Type().Elem().Kind()); err != nil {
+		if err := encoder.getType(reflect.New(value.Type().Elem()).Elem()); err != nil {
 			return err
 		}
 
 		return nil
 	case reflect.Struct:
-		if err := encoder.Encode(value.Type().NumField()); err != nil {
+		n := value.Type().NumField()
+
+		for i := 0; i < value.Type().NumField(); i++ {
+			if value.Field(i).IsZero() {
+				n--
+			}
+		}
+
+		if err := encoder.Encode(n); err != nil {
 			return nil
 		}
 
