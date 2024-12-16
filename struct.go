@@ -190,3 +190,65 @@ func (structs *Struct) Sub(i int, v interface{}) {
 
 	s.(*Struct).As(&v)
 }
+
+func As[T interface{}](v interface{}) T {
+	switch v := v.(type) {
+	case *Struct:
+		var t T
+
+		v.As(&t)
+		return t
+	case T:
+		return v
+	default:
+		value := Value(v)
+		t := reflect.TypeFor[T]()
+
+		var ptr reflect.Value
+
+		switch value.Kind() {
+		case reflect.Array, reflect.Slice:
+			ptr = as2(value, reflect.New(t).Elem())
+		case reflect.Map:
+			ptr = as2(value, reflect.MakeMapWithSize(t, value.Len()))
+		default:
+			var zero T
+			return zero
+		}
+
+		return ptr.Interface().(T)
+	}
+}
+
+func as2(src, dst reflect.Value) reflect.Value {
+	if s, ok := src.Interface().(*Struct); ok {
+		s.As(dst)
+		return dst
+	}
+
+	src = Abs[reflect.Value](src)
+	dst = Abs[reflect.Value](dst)
+
+	switch dst.Type().Kind() {
+	case reflect.Array, reflect.Slice:
+		for i := 0; i < src.Len(); i++ {
+			ptr := as2(src.Index(i), reflect.New(dst.Type().Elem()).Elem())
+			dst = reflect.Append(dst, ptr)
+		}
+
+		return dst
+	case reflect.Map:
+		m := src.MapRange()
+
+		for m.Next() {
+			k := as2(m.Key(), reflect.New(dst.Type().Key()).Elem())
+			v := as2(m.Value(), reflect.New(dst.Type().Elem()).Elem())
+
+			dst.SetMapIndex(k, v)
+		}
+
+		return dst
+	default:
+		return src
+	}
+}
