@@ -112,7 +112,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 			switch value.Type().Elem().Kind() {
 			case reflect.Struct:
 				for i := 0; i < value.Len(); i++ {
-					if err := encoder.Encode(_interface(value.Index(i))); err != nil {
+					if err := encoder.Encode(interfaces(value.Index(i))); err != nil {
 						return err
 					}
 				}
