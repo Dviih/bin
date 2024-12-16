@@ -83,7 +83,7 @@
 ## Protocol specification
 
 ### [Bin Protocol](https://github.com/Dviih/bin/blob/main/protocol.md)
-### [Interface Extension](https://github.com/Dviih/bin/blob/main/protocol_interace.md)
+### [Interface Extension](https://github.com/Dviih/bin/blob/main/protocol_interface.md)
 
 ---
 
