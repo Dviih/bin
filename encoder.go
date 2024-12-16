@@ -103,7 +103,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
-		if err := encoder.Encode(value.Kind()); err != nil {
+		if err := encoder.getType(value); err != nil {
 			return err
 		}
 
@@ -265,11 +265,11 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 
 		return nil
 	case reflect.Map:
-		if err := encoder.Encode(value.Type().Key().Kind()); err != nil {
+		if err := encoder.getType(reflect.New(value.Type().Key()).Elem()); err != nil {
 			return err
 		}
 
-		if err := encoder.Encode(value.Type().Elem().Kind()); err != nil {
+		if err := encoder.getType(reflect.New(value.Type().Elem()).Elem()); err != nil {
 			return err
 		}
 
