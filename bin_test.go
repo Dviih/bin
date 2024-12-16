@@ -200,31 +200,22 @@ func TestUnmarshal(t *testing.T) {
 }
 
 func BenchmarkEncode(b *testing.B) {
-	s := &stream{}
-
-	b.ResetTimer()
-	if err := NewEncoder(s).Encode(StructAllValue); err != nil {
+	data, err := Marshal(StructAllValue)
+	if err != nil {
 		b.Error("failed to encode (bench)")
 	}
+
 	b.StopTimer()
 
-	if string(s.Data) != string(expectedStructAll) {
+	if string(data) != string(expectedStructAll) {
 		b.Error("not equal (bench)")
 	}
 }
 
 func BenchmarkDecode(b *testing.B) {
-	s := &stream{
-		Data: expectedStructAll,
-	}
-
-	var i interface{}
-	_ = i
-	var sa *StructAll
-
-	b.ResetTimer()
-	if err := NewDecoder(s).Decode(&sa); err != nil {
-		b.Error("failed to decode (bench)")
+	sa, err := Unmarshal[*StructAll](expectedStructAll)
+	if err != nil {
+		b.Errorf("failed to unmarshalas (bench): %v", err)
 	}
 
 	b.StopTimer()
