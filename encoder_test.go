@@ -20,291 +20,292 @@
 package bin
 
 import (
+	"github.com/Dviih/bin/buffer"
 	"testing"
 )
 
 func TestEncoderNil(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Nil); err != nil {
 		t.Error("failed to encode nil")
 	}
 
-	if string(s.Data) != string(expectedNil) {
-		t.Errorf("expected %v, received: %v", expectedNil, s.Data)
+	if string(b.Data()) != string(expectedNil) {
+		t.Errorf("expected %v, received: %v", expectedNil, b.Data())
 	}
 }
 
 func TestEncoderBool(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Bool); err != nil {
 		t.Error("failed to encode boolean")
 	}
 
-	if string(s.Data) != string(expectedBool) {
-		t.Errorf("expected %v, received: %v", expectedBool, s.Data)
+	if string(b.Data()) != string(expectedBool) {
+		t.Errorf("expected %v, received: %v", expectedBool, b.Data())
 	}
 }
 
 func TestEncoderInt(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Int); err != nil {
 		t.Error("failed to encode int")
 	}
 
-	if string(s.Data) != string(expectedInt) {
-		t.Errorf("expected %v, received: %v", expectedInt, s.Data)
+	if string(b.Data()) != string(expectedInt) {
+		t.Errorf("expected %v, received: %v", expectedInt, b.Data())
 	}
 }
 
 func TestEncoderUint(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Uint); err != nil {
 		t.Error("failed to encode uint")
 	}
 
-	if string(s.Data) != string(expectedUint) {
-		t.Errorf("expected %v, received: %v", expectedUint, s.Data)
+	if string(b.Data()) != string(expectedUint) {
+		t.Errorf("expected %v, received: %v", expectedUint, b.Data())
 	}
 }
 
 func TestEncoderFloat(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Float); err != nil {
 		t.Error("failed to encode float")
 	}
 
-	if string(s.Data) != string(expectedFloat) {
-		t.Errorf("expected %v, received: %v", expectedFloat, s.Data)
+	if string(b.Data()) != string(expectedFloat) {
+		t.Errorf("expected %v, received: %v", expectedFloat, b.Data())
 	}
 }
 
 func TestEncoderComplex(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Complex); err != nil {
 		t.Error("failed to encode complex")
 	}
 
-	if string(s.Data) != string(expectedComplex) {
-		t.Errorf("expected %v, received: %v", expectedComplex, s.Data)
+	if string(b.Data()) != string(expectedComplex) {
+		t.Errorf("expected %v, received: %v", expectedComplex, b.Data())
 	}
 }
 
 func TestEncoderArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Array); err != nil {
 		t.Error("failed to encode array")
 	}
 
-	if string(s.Data) != string(expectedArray) {
-		t.Errorf("expected %v, received: %v", expectedArray, s.Data)
+	if string(b.Data()) != string(expectedArray) {
+		t.Errorf("expected %v, received: %v", expectedArray, b.Data())
 	}
 }
 
 func TestEncoderMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Map); err != nil {
 		t.Error("failed to encode map")
 	}
 
-	if string(s.Data) != string(expectedMap) {
-		t.Errorf("expected %v, received: %v", expectedMap, s.Data)
+	if string(b.Data()) != string(expectedMap) {
+		t.Errorf("expected %v, received: %v", expectedMap, b.Data())
 	}
 }
 
 func TestEncoderSlice(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Slice); err != nil {
 		t.Error("failed to encode slice")
 	}
 
-	if string(s.Data) != string(expectedSlice) {
-		t.Errorf("expected %v, received: %v", expectedSlice, s.Data)
+	if string(b.Data()) != string(expectedSlice) {
+		t.Errorf("expected %v, received: %v", expectedSlice, b.Data())
 	}
 }
 
 func TestEncoderString(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(String); err != nil {
 		t.Error("failed to encode string")
 	}
 
-	if string(s.Data) != string(expectedString) {
-		t.Errorf("expected %v, received: %v", expectedString, s.Data)
+	if string(b.Data()) != string(expectedString) {
+		t.Errorf("expected %v, received: %v", expectedString, b.Data())
 	}
 }
 
 func TestEncoderStruct(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Struct2); err != nil {
 		t.Error("failed to encode struct")
 	}
 
-	if string(s.Data) != string(expectedStruct) {
-		t.Errorf("expected %v, received: %v", expectedStruct, s.Data)
+	if string(b.Data()) != string(expectedStruct) {
+		t.Errorf("expected %v, received: %v", expectedStruct, b.Data())
 	}
 }
 
 func TestEncoderStructNumbers(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(StructNumbersValue); err != nil {
 		t.Error("failed to encode struct numbers")
 	}
 
-	if string(s.Data) != string(expectedStructNumbers) {
-		t.Errorf("expected %v, received: %v", expectedStructNumbers, s.Data)
+	if string(b.Data()) != string(expectedStructNumbers) {
+		t.Errorf("expected %v, received: %v", expectedStructNumbers, b.Data())
 	}
 }
 
 func TestEncoderStructArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(StructArrayValue); err != nil {
 		t.Error("failed to encode struct array")
 	}
 
-	if string(s.Data) != string(expectedStructArray) {
-		t.Errorf("expected %v, received: %v", expectedStructArray, s.Data)
+	if string(b.Data()) != string(expectedStructArray) {
+		t.Errorf("expected %v, received: %v", expectedStructArray, b.Data())
 	}
 }
 
 func TestEncoderStructMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(StructMapValue); err != nil {
 		t.Error("failed to encode struct map")
 	}
 
-	if string(s.Data) != string(expectedStructMap) {
-		t.Errorf("expected %v, received: %v", expectedStructMap, s.Data)
+	if string(b.Data()) != string(expectedStructMap) {
+		t.Errorf("expected %v, received: %v", expectedStructMap, b.Data())
 	}
 }
 
 func TestEncoderStructAll(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(StructAllValue); err != nil {
 		t.Error("failed to encode struct all")
 	}
 
-	if string(s.Data) != string(expectedStructAll) {
-		t.Errorf("expected %v, received: %v", expectedStructAll, s.Data)
+	if string(b.Data()) != string(expectedStructAll) {
+		t.Errorf("expected %v, received: %v", expectedStructAll, b.Data())
 	}
 }
 
 func TestEncoderInterfaceNil(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(nil)); err != nil {
 		t.Errorf("failed to encode interface nil")
 	}
 
-	if string(s.Data) != string(expectedInterfaceNil) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceNil, s.Data)
+	if string(b.Data()) != string(expectedInterfaceNil) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceNil, b.Data())
 	}
 }
 
 func TestEncoderInterfaceBool(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Bool)); err != nil {
 		t.Errorf("failed to encode interface boolean")
 	}
 
-	if string(s.Data) != string(expectedInterfaceBool) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceBool, s.Data)
+	if string(b.Data()) != string(expectedInterfaceBool) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceBool, b.Data())
 	}
 }
 
 func TestEncoderInterfaceArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Array)); err != nil {
 		t.Errorf("failed to encode interface array")
 	}
 
-	if string(s.Data) != string(expectedInterfaceArray) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceArray, s.Data)
+	if string(b.Data()) != string(expectedInterfaceArray) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceArray, b.Data())
 	}
 }
 
 func TestEncoderInterfaceMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Map)); err != nil {
 		t.Errorf("failed to encode interface map")
 	}
 
-	if string(s.Data) != string(expectedInterfaceMap) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceMap, s.Data)
+	if string(b.Data()) != string(expectedInterfaceMap) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap, b.Data())
 	}
 }
 
@@ -312,15 +313,15 @@ func TestEncoderInterfaceMap(t *testing.T) {
 func TestEncoderInterfaceMap2(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Map2)); err != nil {
 		t.Errorf("failed to encode interface map2")
 	}
 
-	if string(s.Data) != string(expectedInterfaceMap2) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceMap2, s.Data)
+	if string(b.Data()) != string(expectedInterfaceMap2) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap2, b.Data())
 	}
 }
 
@@ -328,15 +329,15 @@ func TestEncoderInterfaceMap2(t *testing.T) {
 func TestEncoderInterfaceMap3(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Map3)); err != nil {
 		t.Errorf("failed to encode interface map3")
 	}
 
-	if string(s.Data) != string(expectedInterfaceMap3) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceMap3, s.Data)
+	if string(b.Data()) != string(expectedInterfaceMap3) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap3, b.Data())
 	}
 }
 
@@ -344,133 +345,133 @@ func TestEncoderInterfaceMap3(t *testing.T) {
 func TestEncoderInterfaceMap4(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Map4)); err != nil {
 		t.Errorf("failed to encode interface map4")
 	}
 
-	if string(s.Data) != string(expectedInterfaceMap4) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceMap4, s.Data)
+	if string(b.Data()) != string(expectedInterfaceMap4) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceMap4, b.Data())
 	}
 }
 
 func TestEncoderInterfaceSlice(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Slice)); err != nil {
 		t.Errorf("failed to encode interface slice")
 	}
 
-	if string(s.Data) != string(expectedInterfaceSlice) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice, s.Data)
+	if string(b.Data()) != string(expectedInterfaceSlice) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice, b.Data())
 	}
 }
 
 func TestEncoderInterfaceSlice2(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Slice2)); err != nil {
 		t.Errorf("failed to encode interface slice2")
 	}
 
-	if string(s.Data) != string(expectedInterfaceSlice2) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice2, s.Data)
+	if string(b.Data()) != string(expectedInterfaceSlice2) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceSlice2, b.Data())
 	}
 }
 
 func TestEncoderInterfaceString(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(String)); err != nil {
 		t.Errorf("failed to encode interface string")
 	}
 
-	if string(s.Data) != string(expectedInterfaceString) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceString, s.Data)
+	if string(b.Data()) != string(expectedInterfaceString) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceString, b.Data())
 	}
 }
 
 func TestEncoderInterfaceStruct(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(Struct2)); err != nil {
 		t.Errorf("failed to encode interface struct")
 	}
 
-	if string(s.Data) != string(expectedInterfaceStruct) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceStruct, s.Data)
+	if string(b.Data()) != string(expectedInterfaceStruct) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStruct, b.Data())
 	}
 }
 
 func TestEncoderInterfaceStructNumbers(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(StructNumbersValue)); err != nil {
 		t.Errorf("failed to encode interface struct numbers")
 	}
 
-	if string(s.Data) != string(expectedInterfaceStructNumbers) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceStructNumbers, s.Data)
+	if string(b.Data()) != string(expectedInterfaceStructNumbers) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructNumbers, b.Data())
 	}
 }
 
 func TestEncoderInterfaceStructArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(StructArrayValue)); err != nil {
 		t.Errorf("failed to encode interface struct array")
 	}
 
-	if string(s.Data) != string(expectedInterfaceStructArray) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceStructArray, s.Data)
+	if string(b.Data()) != string(expectedInterfaceStructArray) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructArray, b.Data())
 	}
 }
 func TestEncoderInterfaceStructMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(StructMapValue)); err != nil {
 		t.Errorf("failed to encode interface struct map")
 	}
 
-	if string(s.Data) != string(expectedInterfaceStructMap) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceStructMap, s.Data)
+	if string(b.Data()) != string(expectedInterfaceStructMap) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructMap, b.Data())
 	}
 }
 
 func TestEncoderInterfaceStructAll(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{}
-	encoder := NewEncoder(s)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(Interface(StructAllValue)); err != nil {
 		t.Errorf("failed to encode interface struct all")
 	}
 
-	if string(s.Data) != string(expectedInterfaceStructAll) {
-		t.Errorf("expected: %v, received: %v", expectedInterfaceStructAll, s.Data)
+	if string(b.Data()) != string(expectedInterfaceStructAll) {
+		t.Errorf("expected: %v, received: %v", expectedInterfaceStructAll, b.Data())
 	}
 }

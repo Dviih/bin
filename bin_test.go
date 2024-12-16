@@ -24,23 +24,6 @@ import (
 	"testing"
 )
 
-type stream struct {
-	Data []byte
-	read int
-}
-
-func (stream *stream) Write(data []byte) (int, error) {
-	stream.Data = append(stream.Data, data...)
-	return len(data), nil
-}
-
-func (stream *stream) Read(data []byte) (int, error) {
-	i := copy(data, stream.Data[stream.read:stream.read+len(data)])
-	stream.read += len(data)
-
-	return i, nil
-}
-
 type Struct1 struct {
 	FieldOne string `bin:"100"`
 	FieldTwo uint64 `bin:"200"`
@@ -200,31 +183,22 @@ func TestUnmarshal(t *testing.T) {
 }
 
 func BenchmarkEncode(b *testing.B) {
-	s := &stream{}
-
-	b.ResetTimer()
-	if err := NewEncoder(s).Encode(StructAllValue); err != nil {
+	data, err := Marshal(StructAllValue)
+	if err != nil {
 		b.Error("failed to encode (bench)")
 	}
+
 	b.StopTimer()
 
-	if string(s.Data) != string(expectedStructAll) {
+	if string(data) != string(expectedStructAll) {
 		b.Error("not equal (bench)")
 	}
 }
 
 func BenchmarkDecode(b *testing.B) {
-	s := &stream{
-		Data: expectedStructAll,
-	}
-
-	var i interface{}
-	_ = i
-	var sa *StructAll
-
-	b.ResetTimer()
-	if err := NewDecoder(s).Decode(&sa); err != nil {
-		b.Error("failed to decode (bench)")
+	sa, err := Unmarshal[*StructAll](expectedStructAll)
+	if err != nil {
+		b.Errorf("failed to unmarshalas (bench): %v", err)
 	}
 
 	b.StopTimer()
