@@ -26,7 +26,8 @@ import (
 )
 
 type Decoder struct {
-	reader io.Reader
+	readByte func() (byte, error)
+	reader   io.Reader
 }
 
 func (decoder *Decoder) ReadByte() (byte, error) {
