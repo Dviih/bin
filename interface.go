@@ -29,19 +29,19 @@ func Interface(v interface{}) reflect.Value {
 	}
 
 	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
-	ptr.Set(_interface(Value(v)))
+	ptr.Set(interfaces(Value(v)))
 
 	return ptr
 }
 
-func _interface(value reflect.Value) reflect.Value {
+func interfaces(value reflect.Value) reflect.Value {
 	switch value.Kind() {
 	case reflect.Array:
 		if _, elem := KeyElem(value); elem.Kind() == reflect.Struct {
 			ptr := reflect.New(reflect.ArrayOf(value.Len(), reflect.TypeFor[interface{}]())).Elem()
 
 			for i := 0; i < value.Len(); i++ {
-				ptr.Index(i).Set(_interface(value.Index(i)))
+				ptr.Index(i).Set(interfaces(value.Index(i)))
 			}
 
 			return ptr.Convert(reflect.TypeFor[interface{}]())
@@ -53,7 +53,7 @@ func _interface(value reflect.Value) reflect.Value {
 			ptr := reflect.MakeSlice(reflect.TypeFor[[]interface{}](), value.Len(), value.Cap())
 
 			for i := 0; i < value.Len(); i++ {
-				ptr.Index(i).Set(_interface(value.Index(i)))
+				ptr.Index(i).Set(interfaces(value.Index(i)))
 			}
 
 			return ptr.Convert(reflect.TypeFor[interface{}]())
@@ -78,11 +78,11 @@ func _interface(value reflect.Value) reflect.Value {
 			k, v := m.Key(), m.Value()
 
 			if kb {
-				k = _interface(k)
+				k = interfaces(k)
 			}
 
 			if vb {
-				v = _interface(v)
+				v = interfaces(v)
 			}
 
 			ptr.SetMapIndex(k, v)
@@ -115,7 +115,7 @@ func _interface(value reflect.Value) reflect.Value {
 
 		for i, v := range values {
 			if v.Kind() == reflect.Struct {
-				v = _interface(v)
+				v = interfaces(v)
 			}
 
 			tmp.Field(i).Set(v)
