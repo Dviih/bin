@@ -288,7 +288,15 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 
 		return nil
 	case reflect.Struct:
-		if err := encoder.Encode(value.Type().NumField()); err != nil {
+		n := value.Type().NumField()
+
+		for i := 0; i < value.Type().NumField(); i++ {
+			if value.Field(i).IsZero() {
+				n--
+			}
+		}
+
+		if err := encoder.Encode(n); err != nil {
 			return nil
 		}
 
