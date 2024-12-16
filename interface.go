@@ -36,8 +36,59 @@ func Interface(v interface{}) reflect.Value {
 
 func _interface(value reflect.Value) reflect.Value {
 	switch value.Kind() {
-	case reflect.Array, reflect.Map, reflect.Slice:
-		return value
+	case reflect.Array:
+		if _, elem := KeyElem(value); elem.Kind() == reflect.Struct {
+			ptr := reflect.New(reflect.ArrayOf(value.Len(), reflect.TypeFor[interface{}]())).Elem()
+
+			for i := 0; i < value.Len(); i++ {
+				ptr.Index(i).Set(_interface(value.Index(i)))
+			}
+
+			return ptr.Convert(reflect.TypeFor[interface{}]())
+		}
+
+		return value.Convert(reflect.TypeFor[interface{}]())
+	case reflect.Slice:
+		if _, elem := KeyElem(value); elem.Kind() == reflect.Struct {
+			ptr := reflect.MakeSlice(reflect.TypeFor[[]interface{}](), value.Len(), value.Cap())
+
+			for i := 0; i < value.Len(); i++ {
+				ptr.Index(i).Set(_interface(value.Index(i)))
+			}
+
+			return ptr.Convert(reflect.TypeFor[interface{}]())
+		}
+
+		return value.Convert(reflect.TypeFor[interface{}]())
+	case reflect.Map:
+		kt, vt := KeyElem(value)
+
+		kb := kt.Kind() == reflect.Struct
+		vb := vt.Kind() == reflect.Struct
+
+		if !kb && !vb {
+			return value.Convert(reflect.TypeFor[interface{}]())
+		}
+
+		ptr := reflect.MakeMapWithSize(reflect.MapOf(reflect.TypeFor[interface{}](), reflect.TypeFor[interface{}]()), value.Len())
+
+		m := value.MapRange()
+
+		for m.Next() {
+			k, v := m.Key(), m.Value()
+
+			if kb {
+				k = _interface(k)
+			}
+
+			if vb {
+				v = _interface(v)
+			}
+
+			ptr.SetMapIndex(k, v)
+		}
+
+		return ptr.Convert(reflect.TypeFor[interface{}]())
 	case reflect.Struct:
 		var fields []reflect.StructField
 		var values []reflect.Value
@@ -63,10 +114,17 @@ func _interface(value reflect.Value) reflect.Value {
 		tmp := reflect.New(reflect.StructOf(fields)).Elem()
 
 		for i, v := range values {
+			if v.Kind() == reflect.Struct {
+				v = _interface(v)
+			}
+
 			tmp.Field(i).Set(v)
 		}
 
-		return tmp
+		ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
+		ptr.Set(tmp)
+
+		return ptr
 	default:
 		return value.Convert(reflect.TypeFor[interface{}]())
 	}

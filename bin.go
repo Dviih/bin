@@ -85,6 +85,26 @@ func Abs[T interface{}](t interface{}) T {
 	return t.(T)
 }
 
+func KeyElem(value reflect.Value) (reflect.Type, reflect.Type) {
+	t := Abs[reflect.Value](value).Type()
+
+	for {
+		switch t.Kind() {
+		case reflect.Array, reflect.Slice:
+			t = t.Elem()
+		case reflect.Map:
+			k, v := t.Key(), t.Elem()
+
+			_, k = KeyElem(reflect.New(k))
+			_, v = KeyElem(reflect.New(v))
+
+			return k, v
+		default:
+			return nil, t
+		}
+	}
+}
+
 func Marshal(v interface{}) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	encoder := NewEncoder(buffer)
