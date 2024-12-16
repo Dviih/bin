@@ -109,14 +109,18 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		switch value.Kind() {
 		case reflect.Array, reflect.Slice, reflect.Map:
-			if err := encoder.getType(value); err != nil {
-				return err
+			switch value.Type().Elem().Kind() {
+			case reflect.Struct:
+				for i := 0; i < value.Len(); i++ {
+					if err := encoder.Encode(_interface(value.Index(i))); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			default:
 			}
 		case reflect.Struct:
-			if err := encoder.getType(value); err != nil {
-				return err
-			}
-
 			return encoder.structs(value, true)
 		default:
 		}
