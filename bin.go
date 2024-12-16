@@ -113,7 +113,7 @@ func Marshal(v interface{}) ([]byte, error) {
 		return nil, err
 	}
 
-	return buffer.Bytes(), nil
+	return b.Data(), nil
 }
 
 func Unmarshal[T interface{}](data []byte) (T, error) {
