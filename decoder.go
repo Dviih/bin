@@ -41,6 +41,12 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return CantSet
 	}
 
+	switch value.Type() {
+	case reflect.TypeFor[*Struct]():
+		Zero(value)
+		return decoder.structs(value)
+	}
+
 	if v == nil {
 		value.SetZero()
 		return nil
