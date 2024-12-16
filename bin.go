@@ -106,8 +106,8 @@ func KeyElem(value reflect.Value) (reflect.Type, reflect.Type) {
 }
 
 func Marshal(v interface{}) ([]byte, error) {
-	buffer := &bytes.Buffer{}
-	encoder := NewEncoder(buffer)
+	b := buffer.New()
+	encoder := NewEncoder(b)
 
 	if err := encoder.Encode(v); err != nil {
 		return nil, err
