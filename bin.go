@@ -119,7 +119,7 @@ func Marshal(v interface{}) ([]byte, error) {
 func Unmarshal[T interface{}](data []byte) (T, error) {
 	var t T
 
-	if err := NewDecoder(bytes.NewReader(data)).Decode(&t); err != nil {
+	if err := NewDecoder(buffer.From(data)).Decode(&t); err != nil {
 		var zero T
 		return zero, err
 	}
