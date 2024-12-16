@@ -31,10 +31,7 @@ type Decoder struct {
 }
 
 func (decoder *Decoder) ReadByte() (byte, error) {
-	data := make([]byte, 1)
-	_, err := decoder.reader.Read(data)
-
-	return data[0], err
+	return decoder.readByte()
 }
 
 func (decoder *Decoder) Decode(v interface{}) error {
