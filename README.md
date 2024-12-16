@@ -93,14 +93,14 @@ import (
 
 type Example struct {
 	Twenty  int    `bin:"20"`
-	Fifth   []int  `bin:"50"`
+	Fifty   []int  `bin:"50"`
 	Hundred string `bin:"100"`
 }
 
 func main() {
 	example := &Example{
 		Twenty:  20,
-		Fifth:   []int{5, 0},
+		Fifty:   []int{5, 0},
 		Hundred: "A hundred",
 	}
 
