@@ -20,8 +20,8 @@
 package bin
 
 import (
-	"bytes"
 	"errors"
+	"github.com/Dviih/bin/buffer"
 	"reflect"
 )
 
