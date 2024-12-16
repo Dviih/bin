@@ -177,6 +177,11 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 	t := value.Type()
 
 	for i := 0; i < value.NumField(); i++ {
+		field := Abs[reflect.Value](value.Field(i))
+		if field.IsZero() {
+			continue
+		}
+
 		fieldType := t.Field(i)
 
 		if !fieldType.IsExported() {
