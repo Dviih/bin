@@ -430,7 +430,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 		return reflect.MapOf(key, value), nil
 	case reflect.Struct:
-		return reflect.TypeFor[struct{}](), nil
+		return reflect.TypeFor[*Struct](), nil
 	case reflect.Chan, reflect.Func, reflect.Pointer, reflect.UnsafePointer:
 		return nil, nil
 	}
