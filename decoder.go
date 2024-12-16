@@ -26,14 +26,12 @@ import (
 )
 
 type Decoder struct {
-	reader io.Reader
+	readByte func() (byte, error)
+	reader   io.Reader
 }
 
 func (decoder *Decoder) ReadByte() (byte, error) {
-	data := make([]byte, 1)
-	_, err := decoder.reader.Read(data)
-
-	return data[0], err
+	return decoder.readByte()
 }
 
 func (decoder *Decoder) Decode(v interface{}) error {
@@ -291,8 +289,23 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 }
 
 func NewDecoder(reader io.Reader) *Decoder {
+	var byteReader func() (byte, error)
+
+	v, ok := reader.(io.ByteReader)
+	if ok {
+		byteReader = v.ReadByte
+	} else {
+		byteReader = func() (byte, error) {
+			data := make([]byte, 1)
+			_, err := reader.Read(data)
+
+			return data[0], err
+		}
+	}
+
 	return &Decoder{
-		reader: reader,
+		readByte: byteReader,
+		reader:   reader,
 	}
 }
 
