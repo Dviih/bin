@@ -20,6 +20,7 @@
 package bin
 
 import (
+	"errors"
 	"io"
 	"math"
 	"reflect"
@@ -227,10 +228,13 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return nil
 	case reflect.Struct:
 		fields := (&Struct{}).fields(value)
-
 		for i := 0; i < len(fields); i++ {
 			tag, err := VarIntOut[int](decoder)
 			if err != nil {
+				if errors.Is(err, io.EOF) {
+					continue
+				}
+
 				return err
 			}
 
