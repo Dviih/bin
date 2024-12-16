@@ -20,6 +20,7 @@
 package bin
 
 import (
+	"github.com/Dviih/bin/buffer"
 	"reflect"
 	"testing"
 )
@@ -27,11 +28,7 @@ import (
 func TestDecoderNil(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedNil,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedNil))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -46,11 +43,7 @@ func TestDecoderNil(t *testing.T) {
 func TestDecoderBool(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedBool,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedBool))
 
 	var b bool
 	if err := decoder.Decode(&b); err != nil {
@@ -65,11 +58,7 @@ func TestDecoderBool(t *testing.T) {
 func TestDecoderInt(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInt,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInt))
 
 	var i int
 	if err := decoder.Decode(&i); err != nil {
@@ -84,11 +73,7 @@ func TestDecoderInt(t *testing.T) {
 func TestDecoderUint(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedUint,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedUint))
 
 	var u uint
 	if err := decoder.Decode(&u); err != nil {
@@ -103,11 +88,7 @@ func TestDecoderUint(t *testing.T) {
 func TestDecoderFloat(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedFloat,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedFloat))
 
 	var f float64
 	if err := decoder.Decode(&f); err != nil {
@@ -122,11 +103,7 @@ func TestDecoderFloat(t *testing.T) {
 func TestDecoderComplex(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedComplex,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedComplex))
 
 	var c complex128
 	if err := decoder.Decode(&c); err != nil {
@@ -141,11 +118,7 @@ func TestDecoderComplex(t *testing.T) {
 func TestDecoderArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedArray,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedArray))
 
 	var array [3]uint64
 	if err := decoder.Decode(&array); err != nil {
@@ -160,11 +133,7 @@ func TestDecoderArray(t *testing.T) {
 func TestDecoderMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedMap,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedMap))
 
 	var m map[byte]int
 	if err := decoder.Decode(&m); err != nil {
@@ -179,11 +148,7 @@ func TestDecoderMap(t *testing.T) {
 func TestDecoderSlice(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedSlice,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedSlice))
 
 	var slice []int
 	if err := decoder.Decode(&slice); err != nil {
@@ -198,11 +163,7 @@ func TestDecoderSlice(t *testing.T) {
 func TestDecoderString(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedString,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedString))
 
 	var _string string
 	if err := decoder.Decode(&_string); err != nil {
@@ -217,11 +178,7 @@ func TestDecoderString(t *testing.T) {
 func TestDecoderStruct(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedStruct,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedStruct))
 
 	var struct2 *Struct1
 	if err := decoder.Decode(&struct2); err != nil {
@@ -236,11 +193,7 @@ func TestDecoderStruct(t *testing.T) {
 func TestDecoderStructNumbers(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedStructNumbers,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedStructNumbers))
 
 	var structNumbers *StructNumbers
 	if err := decoder.Decode(&structNumbers); err != nil {
@@ -255,11 +208,7 @@ func TestDecoderStructNumbers(t *testing.T) {
 func TestDecoderStructArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedStructArray,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedStructArray))
 
 	var structArray *StructArray
 	if err := decoder.Decode(&structArray); err != nil {
@@ -274,11 +223,7 @@ func TestDecoderStructArray(t *testing.T) {
 func TestDecoderStructMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedStructMap,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedStructMap))
 
 	var structMap *StructMap
 	if err := decoder.Decode(&structMap); err != nil {
@@ -293,11 +238,7 @@ func TestDecoderStructMap(t *testing.T) {
 func TestDecoderStructAll(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedStructAll,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedStructAll))
 
 	var structAll *StructAll
 	if err := decoder.Decode(&structAll); err != nil {
@@ -312,11 +253,7 @@ func TestDecoderStructAll(t *testing.T) {
 func TestDecoderInterfaceNil(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedNil,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceNil))
 
 	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
 	if err := decoder.Decode(ptr); err != nil {
@@ -331,11 +268,7 @@ func TestDecoderInterfaceNil(t *testing.T) {
 func TestDecoderInterfaceBool(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceBool,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceBool))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -350,11 +283,7 @@ func TestDecoderInterfaceBool(t *testing.T) {
 func TestDecoderInterfaceArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceArray,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceArray))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -369,11 +298,7 @@ func TestDecoderInterfaceArray(t *testing.T) {
 func TestDecoderInterfaceMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceMap,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceMap))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -388,11 +313,7 @@ func TestDecoderInterfaceMap(t *testing.T) {
 func TestDecoderInterfaceMap2(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceMap2,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceMap2))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -407,11 +328,7 @@ func TestDecoderInterfaceMap2(t *testing.T) {
 func TestDecoderInterfaceMap3(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceMap3,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceMap3))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -426,11 +343,7 @@ func TestDecoderInterfaceMap3(t *testing.T) {
 func TestDecoderInterfaceMap4(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceMap4,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceMap4))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -445,11 +358,7 @@ func TestDecoderInterfaceMap4(t *testing.T) {
 func TestDecoderInterfaceSlice(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceSlice,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceSlice))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -464,11 +373,7 @@ func TestDecoderInterfaceSlice(t *testing.T) {
 func TestDecoderInterfaceSlice2(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceSlice2,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceSlice2))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -483,11 +388,7 @@ func TestDecoderInterfaceSlice2(t *testing.T) {
 func TestDecoderInterfaceString(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceString,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceString))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -502,19 +403,14 @@ func TestDecoderInterfaceString(t *testing.T) {
 func TestDecoderInterfaceStruct(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceStruct,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceStruct))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
 		t.Error("failed to decode struct")
 	}
 
-	var st *Struct1
-	i.(*Struct).As(&st)
+	st := As[*Struct1](i)
 
 	if !reflect.DeepEqual(st, Struct2) {
 		t.Errorf("expected %v, received: %v", Struct2, st)
@@ -524,11 +420,7 @@ func TestDecoderInterfaceStruct(t *testing.T) {
 func TestDecoderInterfaceStructNumbers(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceStructNumbers,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceStructNumbers))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -546,11 +438,7 @@ func TestDecoderInterfaceStructNumbers(t *testing.T) {
 func TestDecoderInterfaceStructArray(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceStructArray,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceStructArray))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -568,11 +456,7 @@ func TestDecoderInterfaceStructArray(t *testing.T) {
 func TestDecoderInterfaceStructMap(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceStructMap,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceStructMap))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
@@ -590,19 +474,14 @@ func TestDecoderInterfaceStructMap(t *testing.T) {
 func TestDecoderInterfaceStructAll(t *testing.T) {
 	t.Parallel()
 
-	s := &stream{
-		Data: expectedInterfaceStructAll,
-	}
-
-	decoder := NewDecoder(s)
+	decoder := NewDecoder(buffer.From(expectedInterfaceStructAll))
 
 	var i interface{}
 	if err := decoder.Decode(&i); err != nil {
 		t.Error("failed to decode struct all")
 	}
 
-	var st *StructAll
-	i.(*Struct).As(&st)
+	st := As[*StructAll](i)
 
 	if !reflect.DeepEqual(st, StructAllValue) {
 		t.Errorf("expected %v, received: %v", StructAllValue, st)
