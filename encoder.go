@@ -207,8 +207,6 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 			return err
 		}
 
-		field := Abs[reflect.Value](value.Field(i))
-
 		if kind {
 			if err := encoder.Encode(Interface(field.Interface())); err != nil {
 				return err
