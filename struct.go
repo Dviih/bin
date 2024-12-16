@@ -190,3 +190,33 @@ func (structs *Struct) Sub(i int, v interface{}) {
 
 	s.(*Struct).As(&v)
 }
+
+func As[T interface{}](v interface{}) T {
+	switch v := v.(type) {
+	case *Struct:
+		var t T
+
+		v.As(&t)
+		return t
+	case T:
+		return v
+	default:
+		value := Value(v)
+		t := reflect.TypeFor[T]()
+
+		var ptr reflect.Value
+
+		switch value.Kind() {
+		case reflect.Array, reflect.Slice:
+			ptr = as2(value, reflect.New(t).Elem())
+		case reflect.Map:
+			ptr = as2(value, reflect.MakeMapWithSize(t, value.Len()))
+		default:
+			var zero T
+			return zero
+		}
+
+		return ptr.Interface().(T)
+	}
+}
+
