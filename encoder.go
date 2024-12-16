@@ -226,6 +226,10 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 }
 
 func (encoder *Encoder) getType(value reflect.Value) error {
+	if err := encoder.Encode(value.Type().Kind()); err != nil {
+		return err
+	}
+
 	switch value.Type().Kind() {
 	case reflect.Array:
 		dt, d, mixed, di := depth(value)
