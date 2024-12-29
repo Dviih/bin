@@ -188,6 +188,11 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 			continue
 		}
 
+		kind := kind
+		if !kind && fieldType.Type.Kind() == reflect.Interface {
+			kind = true
+		}
+
 		tag := i + 1
 
 		if lookup, ok := fieldType.Tag.Lookup("bin"); ok {
