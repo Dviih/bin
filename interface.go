@@ -37,7 +37,7 @@ func Interface(v interface{}) reflect.Value {
 func interfaces(value reflect.Value) reflect.Value {
 	switch value.Kind() {
 	case reflect.Array:
-		if _, elem := KeyElem(value); elem.Kind() == reflect.Struct {
+		if _, elem := KeyElem(value); Abs[reflect.Type](elem).Kind() == reflect.Struct {
 			ptr := reflect.New(reflect.ArrayOf(value.Len(), reflect.TypeFor[interface{}]())).Elem()
 
 			for i := 0; i < value.Len(); i++ {
@@ -49,7 +49,7 @@ func interfaces(value reflect.Value) reflect.Value {
 
 		return value.Convert(reflect.TypeFor[interface{}]())
 	case reflect.Slice:
-		if _, elem := KeyElem(value); elem.Kind() == reflect.Struct {
+		if _, elem := KeyElem(value); Abs[reflect.Type](elem).Kind() == reflect.Struct {
 			ptr := reflect.MakeSlice(reflect.TypeFor[[]interface{}](), value.Len(), value.Cap())
 
 			for i := 0; i < value.Len(); i++ {
@@ -63,8 +63,8 @@ func interfaces(value reflect.Value) reflect.Value {
 	case reflect.Map:
 		kt, vt := KeyElem(value)
 
-		kb := kt.Kind() == reflect.Struct
-		vb := vt.Kind() == reflect.Struct
+		kb := Abs[reflect.Type](kt).Kind() == reflect.Struct
+		vb := Abs[reflect.Type](vt).Kind() == reflect.Struct
 
 		if !kb && !vb {
 			return value.Convert(reflect.TypeFor[interface{}]())
