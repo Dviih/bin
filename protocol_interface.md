@@ -1,5 +1,5 @@
 # Bin Protocol Extension: Interface
-### This file describes the behaviour of `interface{}` type with the Bin Protocol.
+### This file describes the behavior of `interface{}` type with the Bin Protocol.
 
 ---
 
