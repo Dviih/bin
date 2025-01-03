@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -26,9 +26,10 @@ import (
 )
 
 var (
-	Invalid             = errors.New("invalid value")
-	CantSet             = errors.New("can't set")
-	unexpectedBehaviour = errors.New("this is a very unexpected behaviour")
+	Invalid              = errors.New("invalid value")
+	CantSet              = errors.New("can't set")
+	TypeMustBeComparable = errors.New("type must be comparable")
+	unexpectedBehaviour  = errors.New("this is a very unexpected behaviour")
 )
 
 func Value(v interface{}) reflect.Value {
