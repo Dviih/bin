@@ -125,6 +125,17 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 				return nil
 			default:
+				if err := encoder.getType(value); err != nil {
+					return err
+				}
+			}
+		case reflect.Map:
+			key, elem := KeyElem(value)
+
+			if !key.Comparable() {
+				return TypeMustBeComparable
+			}
+
 			}
 		case reflect.Struct:
 			return encoder.structs(value, true)
