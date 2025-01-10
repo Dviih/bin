@@ -69,6 +69,26 @@ func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 	return m
 }
 
+func (structs *Struct) arrays(value reflect.Value) []interface{} {
+	var m []interface{}
+
+	for i := 0; i < value.Len(); i++ {
+		element := Abs[reflect.Value](value.Index(i))
+
+		switch element.Interface().(type) {
+		case []interface{}:
+			m = append(m, structs.arrays(element))
+		case Struct:
+			s := element.Interface().(Struct)
+			m = append(m, s.Map())
+		default:
+			m = append(m, element.Interface())
+		}
+	}
+
+	return m
+}
+
 func (structs *Struct) Get(i int) (interface{}, bool) {
 	v, ok := structs.m[i]
 	if !ok {
