@@ -59,6 +59,8 @@ func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 			}
 
 			m[r.Key().Interface()] = v.Interface()
+		case []interface{}:
+			m[r.Key()] = structs.arrays(Abs[reflect.Value](r.Value()))
 		default:
 			m[r.Key().Interface()] = v
 		}
