@@ -179,6 +179,10 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		return encoder.Encode(value)
 	case reflect.Map:
+		if !value.Type().Key().Comparable() {
+			return TypeMustBeComparable
+		}
+
 		if err := encoder.Encode(value.Len()); err != nil {
 			return err
 		}
