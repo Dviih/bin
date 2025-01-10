@@ -234,7 +234,7 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 	for i := 0; i < value.NumField(); i++ {
 		field := Abs[reflect.Value](value.Field(i))
-		if field.IsZero() {
+		if field.IsZero() && kind {
 			continue
 		}
 
@@ -261,6 +261,19 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 		if err := encoder.Encode(tag); err != nil {
 			return err
+		}
+
+		kind := kind
+		if field.Kind() == reflect.Struct {
+			kind = true
+		}
+
+		if field.IsZero() {
+			if err := encoder.Encode(0); err != nil {
+				return err
+			}
+
+			continue
 		}
 
 		if kind {
