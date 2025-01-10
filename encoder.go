@@ -103,14 +103,20 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
-		if err := encoder.getType(value); err != nil {
-			return err
-		}
-
 		switch value.Kind() {
-		case reflect.Array, reflect.Slice, reflect.Map:
-			switch value.Type().Elem().Kind() {
+		case reflect.Array, reflect.Slice:
+			_, elem := KeyElem(value)
+
+			switch Abs[reflect.Type](elem).Kind() {
 			case reflect.Struct:
+				if err := encoder.getType(reflect.New(reflect.TypeFor[[]interface{}]()).Elem()); err != nil {
+					return err
+				}
+
+				if err := encoder.Encode(value.Len()); err != nil {
+					return err
+				}
+
 				for i := 0; i < value.Len(); i++ {
 					if err := encoder.Encode(interfaces(value.Index(i))); err != nil {
 						return err
