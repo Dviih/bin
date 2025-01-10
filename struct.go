@@ -39,7 +39,7 @@ func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 	r := old.MapRange()
 
 	for r.Next() {
-		switch v := r.Value().Interface().(type) {
+		switch v := Abs[reflect.Value](r.Value()).Interface().(type) {
 		case Struct:
 			m[r.Key().Interface()] = v.Map()
 		case map[interface{}]interface{}:

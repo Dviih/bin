@@ -246,7 +246,7 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 			}
 		}
 
-		if err := encoder.Encode(dt.Kind()); err != nil {
+		if err := encoder.Encode(Abs[reflect.Type](dt).Kind()); err != nil {
 			return err
 		}
 
@@ -270,7 +270,9 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 			}
 		}
 
-		if err := encoder.Encode(dt.Kind()); err != nil {
+		kind := Abs[reflect.Type](dt).Kind()
+
+		if err := encoder.Encode(kind); err != nil {
 			return err
 		}
 
