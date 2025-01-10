@@ -164,9 +164,17 @@ func (encoder *Encoder) Encode(v interface{}) error {
 					return err
 				}
 			}
+
 		case reflect.Struct:
+			if err := encoder.getType(value); err != nil {
+				return err
+			}
+
 			return encoder.structs(value, true)
 		default:
+			if err := encoder.getType(value); err != nil {
+				return err
+			}
 		}
 
 		return encoder.Encode(value)
