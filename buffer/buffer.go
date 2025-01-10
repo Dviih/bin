@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -51,14 +51,15 @@ func (buffer *Buffer) Write(data []byte) (int, error) {
 }
 
 func (buffer *Buffer) Read(data []byte) (int, error) {
-	n := copy(data, buffer.data[buffer.read:buffer.read+int64(len(data))])
+	end := buffer.read + int64(len(data))
 
-	buffer.read += int64(n)
-
-	if len(data) > n {
-		return n, io.EOF
+	if end > int64(len(buffer.data)) {
+		end = int64(len(buffer.data))
 	}
 
+	n := copy(data, buffer.data[buffer.read:end])
+
+	buffer.read += int64(n)
 	return n, nil
 }
 
