@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -39,7 +39,7 @@ func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 	r := old.MapRange()
 
 	for r.Next() {
-		switch v := r.Value().Interface().(type) {
+		switch v := Abs[reflect.Value](r.Value()).Interface().(type) {
 		case Struct:
 			m[r.Key().Interface()] = v.Map()
 		case map[interface{}]interface{}:
@@ -59,8 +59,30 @@ func (structs *Struct) maps(old reflect.Value) map[interface{}]interface{} {
 			}
 
 			m[r.Key().Interface()] = v.Interface()
+		case []interface{}:
+			m[r.Key()] = structs.arrays(Abs[reflect.Value](r.Value()))
 		default:
 			m[r.Key().Interface()] = v
+		}
+	}
+
+	return m
+}
+
+func (structs *Struct) arrays(value reflect.Value) []interface{} {
+	var m []interface{}
+
+	for i := 0; i < value.Len(); i++ {
+		element := Abs[reflect.Value](value.Index(i))
+
+		switch element.Interface().(type) {
+		case []interface{}:
+			m = append(m, structs.arrays(element))
+		case Struct:
+			s := element.Interface().(Struct)
+			m = append(m, s.Map())
+		default:
+			m = append(m, element.Interface())
 		}
 	}
 
@@ -177,6 +199,31 @@ func (structs *Struct) convert(t reflect.Type, value reflect.Value) reflect.Valu
 	abs := Abs[reflect.Value](value)
 	if abs.CanConvert(t) {
 		return abs.Convert(t)
+	}
+
+	switch value.Kind() {
+	case reflect.Array, reflect.Slice:
+		tmp := reflect.MakeSlice(t, value.Len(), value.Cap())
+
+		for i := 0; i < value.Len(); i++ {
+			ptr := as2(value.Index(i), reflect.New(t.Elem()).Elem())
+			tmp.Index(i).Set(ptr)
+		}
+
+		value = tmp
+	case reflect.Map:
+		tmp := reflect.MakeMapWithSize(t, value.Len())
+
+		m := value.MapRange()
+		for m.Next() {
+			mk := as2(m.Key(), reflect.New(t.Key()).Elem())
+			mv := as2(m.Value(), reflect.New(t.Elem()).Elem())
+
+			tmp.SetMapIndex(mk, mv)
+		}
+
+		value = tmp
+	default:
 	}
 
 	return value

@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -103,14 +103,20 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
-		if err := encoder.getType(value); err != nil {
-			return err
-		}
-
 		switch value.Kind() {
-		case reflect.Array, reflect.Slice, reflect.Map:
-			switch value.Type().Elem().Kind() {
+		case reflect.Array, reflect.Slice:
+			_, elem := KeyElem(value)
+
+			switch Abs[reflect.Type](elem).Kind() {
 			case reflect.Struct:
+				if err := encoder.getType(reflect.New(reflect.TypeFor[[]interface{}]()).Elem()); err != nil {
+					return err
+				}
+
+				if err := encoder.Encode(value.Len()); err != nil {
+					return err
+				}
+
 				for i := 0; i < value.Len(); i++ {
 					if err := encoder.Encode(interfaces(value.Index(i))); err != nil {
 						return err
@@ -119,14 +125,64 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 				return nil
 			default:
+				if err := encoder.getType(value); err != nil {
+					return err
+				}
 			}
+		case reflect.Map:
+			key, elem := KeyElem(value)
+
+			if !key.Comparable() {
+				return TypeMustBeComparable
+			}
+
+			switch Abs[reflect.Type](elem).Kind() {
+			case reflect.Struct:
+				if err := encoder.getType(reflect.New(reflect.MapOf(key, reflect.TypeFor[interface{}]())).Elem()); err != nil {
+					return err
+				}
+
+				if err := encoder.Encode(value.Len()); err != nil {
+					return err
+				}
+
+				m := value.MapRange()
+
+				for m.Next() {
+					if err := encoder.Encode(m.Key()); err != nil {
+						return err
+					}
+
+					if err := encoder.Encode(interfaces(m.Value())); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			default:
+				if err := encoder.getType(reflect.New(elem).Elem()); err != nil {
+					return err
+				}
+			}
+
 		case reflect.Struct:
+			if err := encoder.getType(value); err != nil {
+				return err
+			}
+
 			return encoder.structs(value, true)
 		default:
+			if err := encoder.getType(value); err != nil {
+				return err
+			}
 		}
 
 		return encoder.Encode(value)
 	case reflect.Map:
+		if !value.Type().Key().Comparable() {
+			return TypeMustBeComparable
+		}
+
 		if err := encoder.Encode(value.Len()); err != nil {
 			return err
 		}
@@ -178,7 +234,7 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 	for i := 0; i < value.NumField(); i++ {
 		field := Abs[reflect.Value](value.Field(i))
-		if field.IsZero() {
+		if field.IsZero() && kind {
 			continue
 		}
 
@@ -210,6 +266,19 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 		if err := encoder.Encode(tag); err != nil {
 			return err
+		}
+
+		kind := kind
+		if field.Kind() == reflect.Struct {
+			kind = true
+		}
+
+		if field.IsZero() {
+			if err := encoder.Encode(0); err != nil {
+				return err
+			}
+
+			continue
 		}
 
 		if kind {
@@ -251,7 +320,7 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 			}
 		}
 
-		if err := encoder.Encode(dt.Kind()); err != nil {
+		if err := encoder.Encode(Abs[reflect.Type](dt).Kind()); err != nil {
 			return err
 		}
 
@@ -275,7 +344,9 @@ func (encoder *Encoder) getType(value reflect.Value) error {
 			}
 		}
 
-		if err := encoder.Encode(dt.Kind()); err != nil {
+		kind := Abs[reflect.Type](dt).Kind()
+
+		if err := encoder.Encode(kind); err != nil {
 			return err
 		}
 
