@@ -201,6 +201,31 @@ func (structs *Struct) convert(t reflect.Type, value reflect.Value) reflect.Valu
 		return abs.Convert(t)
 	}
 
+	switch value.Kind() {
+	case reflect.Array, reflect.Slice:
+		tmp := reflect.MakeSlice(t, value.Len(), value.Cap())
+
+		for i := 0; i < value.Len(); i++ {
+			ptr := as2(value.Index(i), reflect.New(t.Elem()).Elem())
+			tmp.Index(i).Set(ptr)
+		}
+
+		value = tmp
+	case reflect.Map:
+		tmp := reflect.MakeMapWithSize(t, value.Len())
+
+		m := value.MapRange()
+		for m.Next() {
+			mk := as2(m.Key(), reflect.New(t.Key()).Elem())
+			mv := as2(m.Value(), reflect.New(t.Elem()).Elem())
+
+			tmp.SetMapIndex(mk, mv)
+		}
+
+		value = tmp
+	default:
+	}
+
 	return value
 }
 
