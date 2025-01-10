@@ -136,6 +136,33 @@ func (encoder *Encoder) Encode(v interface{}) error {
 				return TypeMustBeComparable
 			}
 
+			switch Abs[reflect.Type](elem).Kind() {
+			case reflect.Struct:
+				if err := encoder.getType(reflect.New(reflect.MapOf(key, reflect.TypeFor[interface{}]())).Elem()); err != nil {
+					return err
+				}
+
+				if err := encoder.Encode(value.Len()); err != nil {
+					return err
+				}
+
+				m := value.MapRange()
+
+				for m.Next() {
+					if err := encoder.Encode(m.Key()); err != nil {
+						return err
+					}
+
+					if err := encoder.Encode(interfaces(m.Value())); err != nil {
+						return err
+					}
+				}
+
+				return nil
+			default:
+				if err := encoder.getType(reflect.New(elem).Elem()); err != nil {
+					return err
+				}
 			}
 		case reflect.Struct:
 			return encoder.structs(value, true)
