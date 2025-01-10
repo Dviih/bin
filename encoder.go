@@ -268,7 +268,6 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 			return err
 		}
 
-		kind := kind
 		if field.Kind() == reflect.Struct {
 			kind = true
 		}
