@@ -51,7 +51,13 @@ func (buffer *Buffer) Write(data []byte) (int, error) {
 }
 
 func (buffer *Buffer) Read(data []byte) (int, error) {
-	n := copy(data, buffer.data[buffer.read:buffer.read+int64(len(data))])
+	end := buffer.read + int64(len(data))
+
+	if end > int64(len(buffer.data)) {
+		end = int64(len(buffer.data))
+	}
+
+	n := copy(data, buffer.data[buffer.read:end])
 
 	buffer.read += int64(n)
 
