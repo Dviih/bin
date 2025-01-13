@@ -160,7 +160,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 				return nil
 			default:
-				if err := encoder.getType(reflect.New(elem).Elem()); err != nil {
+				if err := encoder.getType(value); err != nil {
 					return err
 				}
 			}
@@ -266,10 +266,6 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 		if err := encoder.Encode(tag); err != nil {
 			return err
-		}
-
-		if field.Kind() == reflect.Struct {
-			kind = true
 		}
 
 		if field.IsZero() {
