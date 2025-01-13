@@ -160,7 +160,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 				return nil
 			default:
-				if err := encoder.getType(reflect.New(elem).Elem()); err != nil {
+				if err := encoder.getType(value); err != nil {
 					return err
 				}
 			}
