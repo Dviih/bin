@@ -60,6 +60,11 @@ func (buffer *Buffer) Read(data []byte) (int, error) {
 	n := copy(data, buffer.data[buffer.read:end])
 
 	buffer.read += int64(n)
+
+	if len(data) > buffer.Len() {
+		return n, io.EOF
+	}
+
 	return n, nil
 }
 
