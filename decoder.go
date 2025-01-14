@@ -91,7 +91,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.Set(reflect.ValueOf(math.Float32frombits(n)))
+		value.SetFloat(float64(math.Float32frombits(n)))
 		return nil
 	case reflect.Float64:
 		n, err := VarIntOut[uint64](decoder)
@@ -99,7 +99,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.Set(reflect.ValueOf(math.Float64frombits(n)))
+		value.SetFloat(math.Float64frombits(n))
 		return nil
 	case reflect.Complex64:
 		r, err := VarIntOut[uint32](decoder)
@@ -112,7 +112,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.Set(reflect.ValueOf(complex(math.Float32frombits(r), math.Float32frombits(i))))
+		value.SetComplex(complex128(complex(math.Float32frombits(r), math.Float32frombits(i))))
 		return nil
 	case reflect.Complex128:
 		r, err := VarIntOut[uint64](decoder)
@@ -125,7 +125,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.Set(reflect.ValueOf(complex(math.Float64frombits(r), math.Float64frombits(i))))
+		value.SetComplex(complex(math.Float64frombits(r), math.Float64frombits(i)))
 		return nil
 	case reflect.Array:
 		for i := 0; i < value.Len(); i++ {
@@ -223,7 +223,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.Set(reflect.ValueOf(string(data)))
+		value.SetString(string(data))
 		return nil
 	case reflect.Struct:
 		fields := (&Struct{}).fields(value)
