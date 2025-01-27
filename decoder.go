@@ -52,12 +52,18 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.SetZero()
 		return nil
 	case reflect.Bool:
-		b, err := decoder.ReadByte()
+		b := [1]byte{}
+
+		n, err := decoder.reader.Read(b[:])
 		if err != nil {
 			return err
 		}
 
-		if b == 255 {
+		if n != 1 {
+			return io.EOF
+		}
+
+		if b[0] == 255 {
 			value.Set(reflect.ValueOf(true))
 			return nil
 		}
