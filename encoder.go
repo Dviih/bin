@@ -20,7 +20,6 @@
 package bin
 
 import (
-	"bytes"
 	"io"
 	"reflect"
 	"strconv"
@@ -218,7 +217,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 			return err
 		}
 
-		if _, err := io.Copy(encoder.writer, bytes.NewBufferString(value.String())); err != nil {
+		if _, err := encoder.writer.Write([]byte(value.String())); err != nil {
 			return err
 		}
 	case reflect.Struct:
