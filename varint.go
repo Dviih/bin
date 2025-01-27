@@ -105,4 +105,14 @@ func floatToBits[F float32 | float64](f F) interface{} {
 }
 
 	return T(t), nil
+func floatFromBits[V uint32 | uint64](v V) float64 {
+	switch any(v).(type) {
+	case uint32:
+		return float64(*(*float32)(unsafe.Pointer(&v)))
+	case uint64:
+		return *(*float64)(unsafe.Pointer(&v))
+	default:
+		// this should never be reached
+		panic("invalid")
+	}
 }
