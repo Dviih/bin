@@ -22,7 +22,6 @@ package bin
 import (
 	"bytes"
 	"io"
-	"math"
 	"reflect"
 	"strconv"
 )
@@ -60,25 +59,25 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		return nil
 	case reflect.Float32:
-		return encoder.Encode(math.Float32bits(float32(value.Float())))
+		return encoder.Encode(floatToBits(float32(value.Float())))
 	case reflect.Float64:
-		return encoder.Encode(math.Float64bits(value.Float()))
+		return encoder.Encode(floatToBits(value.Float()))
 	case reflect.Complex64:
 		c := complex64(value.Complex())
 
-		if err := encoder.Encode(math.Float32bits(real(c))); err != nil {
+		if err := encoder.Encode(floatToBits(real(c))); err != nil {
 			return err
 		}
 
-		return encoder.Encode(math.Float32bits(imag(c)))
+		return encoder.Encode(floatToBits(imag(c)))
 	case reflect.Complex128:
 		c := value.Complex()
 
-		if err := encoder.Encode(math.Float64bits(real(c))); err != nil {
+		if err := encoder.Encode(floatToBits(real(c))); err != nil {
 			return err
 		}
 
-		return encoder.Encode(math.Float64bits(imag(c)))
+		return encoder.Encode(floatToBits(imag(c)))
 	case reflect.Array:
 		for i := 0; i < value.Len(); i++ {
 			if err := encoder.Encode(value.Index(i)); err != nil {

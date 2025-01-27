@@ -21,7 +21,6 @@ package bin
 
 import (
 	"io"
-	"math"
 	"reflect"
 )
 
@@ -92,15 +91,15 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.SetFloat(float64(math.Float32frombits(n)))
+		value.SetFloat(floatFromBits(n))
 		return nil
 	case reflect.Float64:
-		n, err := VarIntOut[uint64](decoder)
+		n, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
 		}
 
-		value.SetFloat(math.Float64frombits(n))
+		value.SetFloat(floatFromBits(n))
 		return nil
 	case reflect.Complex64:
 		r, err := VarIntOut[uint32](decoder)
@@ -113,7 +112,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.SetComplex(complex128(complex(math.Float32frombits(r), math.Float32frombits(i))))
+		value.SetComplex(complex(floatFromBits(r), floatFromBits(i)))
 		return nil
 	case reflect.Complex128:
 		r, err := VarIntOut[uint64](decoder.reader)
@@ -126,7 +125,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
-		value.SetComplex(complex(math.Float64frombits(r), math.Float64frombits(i)))
+		value.SetComplex(complex(floatFromBits(r), floatFromBits(i)))
 		return nil
 	case reflect.Array:
 		for i := 0; i < value.Len(); i++ {
