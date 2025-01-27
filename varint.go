@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -20,8 +20,9 @@
 package bin
 
 import (
-	"encoding/binary"
 	"io"
+	"reflect"
+	"unsafe"
 )
 
 type Integer = interface {
@@ -29,7 +30,16 @@ type Integer = interface {
 }
 
 func VarIntIn[T Integer](writer io.Writer, t T) error {
-	if _, err := writer.Write(binary.AppendUvarint(nil, uint64(t))); err != nil {
+	b := make([]byte, 0, 10)
+
+	for int(t) >= 0x80 {
+		b = append(b, byte(t)|0x80)
+		t >>= 7
+	}
+
+	b = append(b, byte(t))
+
+	if _, err := writer.Write(b); err != nil {
 		return err
 	}
 
