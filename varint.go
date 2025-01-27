@@ -21,7 +21,6 @@ package bin
 
 import (
 	"io"
-	"reflect"
 	"unsafe"
 )
 
@@ -30,7 +29,7 @@ type Integer = interface {
 }
 
 func VarIntIn[T Integer](writer io.Writer, t T) error {
-	b := make([]byte, 0, 10)
+	b := make([]byte, 0)
 
 	for int(t) >= 0x80 {
 		b = append(b, byte(t)|0x80)
@@ -104,7 +103,6 @@ func floatToBits[F float32 | float64](f F) interface{} {
 	}
 }
 
-	return T(t), nil
 func floatFromBits[V uint32 | uint64](v V) float64 {
 	switch any(v).(type) {
 	case uint32:
