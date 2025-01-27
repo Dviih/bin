@@ -102,12 +102,12 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.SetFloat(floatFromBits(n))
 		return nil
 	case reflect.Complex64:
-		r, err := VarIntOut[uint32](decoder)
+		r, err := VarIntOut[uint32](decoder.reader)
 		if err != nil {
 			return err
 		}
 
-		i, err := VarIntOut[uint32](decoder)
+		i, err := VarIntOut[uint32](decoder.reader)
 		if err != nil {
 			return err
 		}
