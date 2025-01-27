@@ -46,10 +46,52 @@ func VarIntIn[T Integer](writer io.Writer, t T) error {
 	return nil
 }
 
-func VarIntOut[T Integer](reader io.ByteReader) (T, error) {
-	t, err := binary.ReadUvarint(reader)
-	if err != nil {
-		return 0, err
+func VarIntOut[T Integer](reader io.Reader) (T, error) {
+	var br func() (byte, error)
+
+	if rbr, ok := reader.(io.ByteReader); ok {
+		br = rbr.ReadByte
+	} else {
+		br = func() (byte, error) {
+			b := [1]byte{}
+
+			n, err := reader.Read(b[:])
+			if err != nil {
+				return 0, err
+			}
+
+			if n != 1 {
+				return 0, io.EOF
+			}
+
+			return b[0], nil
+		}
+	}
+
+	var t T
+	var p uint64
+
+	for i := 0; i < 10; i++ {
+		b, err := br()
+		if err != nil {
+			return 0, err
+		}
+
+		if b < 0x80 {
+			if i == 9 && b > 1 {
+				return 0, io.EOF
+			}
+
+			return t | T(b)<<p, nil
+		}
+
+		t |= T(b&0x7f) << p
+		p += 7
+	}
+
+	return 0, io.EOF
+}
+
 	}
 
 	return T(t), nil
