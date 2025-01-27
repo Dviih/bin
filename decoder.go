@@ -26,12 +26,7 @@ import (
 )
 
 type Decoder struct {
-	readByte func() (byte, error)
-	reader   io.Reader
-}
-
-func (decoder *Decoder) ReadByte() (byte, error) {
-	return decoder.readByte()
+	reader io.Reader
 }
 
 func (decoder *Decoder) Decode(v interface{}) error {
@@ -70,7 +65,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.Set(reflect.ValueOf(false))
 		return nil
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		n, err := VarIntOut[int64](decoder)
+		n, err := VarIntOut[int64](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -78,7 +73,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.SetInt(n)
 		return nil
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		n, err := VarIntOut[uint64](decoder)
+		n, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -86,7 +81,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.SetUint(n)
 		return nil
 	case reflect.Float32:
-		n, err := VarIntOut[uint32](decoder)
+		n, err := VarIntOut[uint32](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -115,12 +110,12 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.SetComplex(complex128(complex(math.Float32frombits(r), math.Float32frombits(i))))
 		return nil
 	case reflect.Complex128:
-		r, err := VarIntOut[uint64](decoder)
+		r, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
 		}
 
-		i, err := VarIntOut[uint64](decoder)
+		i, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -164,7 +159,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		value.Set(ptr)
 		return nil
 	case reflect.Map:
-		size, err := VarIntOut[int](decoder)
+		size, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -197,7 +192,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 
 		return decoder.Decode(value)
 	case reflect.Slice:
-		size, err := VarIntOut[int](decoder)
+		size, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -212,7 +207,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 
 		return nil
 	case reflect.String:
-		size, err := VarIntOut[int](decoder)
+		size, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -229,7 +224,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		fields := (&Struct{}).fields(value)
 
 		for i := 0; i < len(fields); i++ {
-			tag, err := VarIntOut[int](decoder)
+			tag, err := VarIntOut[int](decoder.reader)
 			if err != nil {
 				return err
 			}
@@ -252,7 +247,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 }
 
 func (decoder *Decoder) structs(value reflect.Value) error {
-	size, err := VarIntOut[int](decoder)
+	size, err := VarIntOut[int](decoder.reader)
 	if err != nil {
 		return err
 	}
@@ -264,7 +259,7 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 	value.Set(reflect.ValueOf(s))
 
 	for i := 0; i < size; i++ {
-		tag, err := VarIntOut[int](decoder)
+		tag, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return err
 		}
@@ -295,28 +290,13 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 }
 
 func NewDecoder(reader io.Reader) *Decoder {
-	var byteReader func() (byte, error)
-
-	v, ok := reader.(io.ByteReader)
-	if ok {
-		byteReader = v.ReadByte
-	} else {
-		byteReader = func() (byte, error) {
-			data := make([]byte, 1)
-			_, err := reader.Read(data)
-
-			return data[0], err
-		}
-	}
-
 	return &Decoder{
-		readByte: byteReader,
-		reader:   reader,
+		reader: reader,
 	}
 }
 
 func (decoder *Decoder) getType() (reflect.Type, error) {
-	kind, err := decoder.ReadByte()
+	kind, err := VarIntOut[int](decoder.reader)
 	if err != nil {
 		return nil, err
 	}
@@ -361,7 +341,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 	case reflect.String:
 		return reflect.TypeFor[string](), nil
 	case reflect.Array:
-		d, err := VarIntOut[int](decoder)
+		d, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return nil, err
 		}
@@ -373,7 +353,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 		var di []int
 		for i := 0; i < d; i++ {
-			n, err := VarIntOut[int](decoder)
+			n, err := VarIntOut[int](decoder.reader)
 			if err != nil {
 				return nil, err
 			}
@@ -388,7 +368,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 		return fromDepth(t, d, di), nil
 	case reflect.Slice:
-		d, err := VarIntOut[int](decoder)
+		d, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return nil, err
 		}
@@ -402,7 +382,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 		if mixed {
 			for i := 0; i < d; i++ {
-				n, err := VarIntOut[int](decoder)
+				n, err := VarIntOut[int](decoder.reader)
 				if err != nil {
 					return nil, err
 				}
