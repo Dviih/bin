@@ -92,7 +92,17 @@ func VarIntOut[T Integer](reader io.Reader) (T, error) {
 	return 0, io.EOF
 }
 
+func floatToBits[F float32 | float64](f F) interface{} {
+	switch any(f).(type) {
+	case float32:
+		return *(*uint32)(unsafe.Pointer(&f))
+	case float64:
+		return *(*uint64)(unsafe.Pointer(&f))
+	default:
+		// this should never be reached
+		panic("invalid")
 	}
+}
 
 	return T(t), nil
 }
