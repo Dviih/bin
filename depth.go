@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,6 @@ package bin
 
 import (
 	"reflect"
-	"slices"
 )
 
 func depth(value reflect.Value) (reflect.Type, int, bool, []int) {
@@ -76,15 +75,13 @@ func isMixed(t reflect.Type) bool {
 }
 
 func fromDepth(t reflect.Type, d int, di []int) reflect.Type {
-	slices.Reverse(di)
-
-	for i := 0; i < d; i++ {
-		if di == nil || di[i] == 0 {
+	for ; d > 0; d-- {
+		if di == nil || di[d-1] == 0 {
 			t = reflect.SliceOf(t)
 			continue
 		}
 
-		t = reflect.ArrayOf(di[i], t)
+		t = reflect.ArrayOf(di[d-1], t)
 	}
 
 	return t

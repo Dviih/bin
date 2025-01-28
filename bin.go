@@ -29,7 +29,7 @@ var (
 	Invalid              = errors.New("invalid value")
 	CantSet              = errors.New("can't set")
 	TypeMustBeComparable = errors.New("type must be comparable")
-	unexpectedBehaviour  = errors.New("this is a very unexpected behaviour")
+	unexpectedBehavior   = errors.New("this is a very unexpected behavior")
 )
 
 func Value(v interface{}) reflect.Value {

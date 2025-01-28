@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -20,8 +20,8 @@
 package bin
 
 import (
-	"encoding/binary"
 	"io"
+	"unsafe"
 )
 
 type Integer = interface {
@@ -29,18 +29,88 @@ type Integer = interface {
 }
 
 func VarIntIn[T Integer](writer io.Writer, t T) error {
-	if _, err := writer.Write(binary.AppendUvarint(nil, uint64(t))); err != nil {
+	b := make([]byte, 0)
+
+	for int(t) >= 0x80 {
+		b = append(b, byte(t)|0x80)
+		t >>= 7
+	}
+
+	b = append(b, byte(t))
+
+	if _, err := writer.Write(b); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func VarIntOut[T Integer](reader io.ByteReader) (T, error) {
-	t, err := binary.ReadUvarint(reader)
-	if err != nil {
-		return 0, err
+func VarIntOut[T Integer](reader io.Reader) (T, error) {
+	var br func() (byte, error)
+
+	if rbr, ok := reader.(io.ByteReader); ok {
+		br = rbr.ReadByte
+	} else {
+		br = func() (byte, error) {
+			b := [1]byte{}
+
+			n, err := reader.Read(b[:])
+			if err != nil {
+				return 0, err
+			}
+
+			if n != 1 {
+				return 0, io.EOF
+			}
+
+			return b[0], nil
+		}
 	}
 
-	return T(t), nil
+	var t T
+	var p uint64
+
+	for i := 0; i < 10; i++ {
+		b, err := br()
+		if err != nil {
+			return 0, err
+		}
+
+		if b < 0x80 {
+			if i == 9 && b > 1 {
+				return 0, io.EOF
+			}
+
+			return t | T(b)<<p, nil
+		}
+
+		t |= T(b&0x7f) << p
+		p += 7
+	}
+
+	return 0, io.EOF
+}
+
+func floatToBits[F float32 | float64](f F) interface{} {
+	switch any(f).(type) {
+	case float32:
+		return *(*uint32)(unsafe.Pointer(&f))
+	case float64:
+		return *(*uint64)(unsafe.Pointer(&f))
+	default:
+		// this should never be reached
+		panic("invalid")
+	}
+}
+
+func floatFromBits[V uint32 | uint64](v V) float64 {
+	switch any(v).(type) {
+	case uint32:
+		return float64(*(*float32)(unsafe.Pointer(&v)))
+	case uint64:
+		return *(*float64)(unsafe.Pointer(&v))
+	default:
+		// this should never be reached
+		panic("invalid")
+	}
 }
