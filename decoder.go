@@ -318,7 +318,7 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 
 	switch reflect.Kind(kind) {
 	case reflect.Invalid:
-		return reflect.TypeOf(nil), nil
+		return nil, nil
 	case reflect.Bool:
 		return reflect.TypeFor[bool](), nil
 	case reflect.Int:
