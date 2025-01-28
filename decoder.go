@@ -129,7 +129,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return nil
 	case reflect.Array:
 		for i := 0; i < value.Len(); i++ {
-			if err := decoder.Decode(value.Index(i)); err != nil {
+			if err := decoder.Decode(value.Index(i)); err != nil && err != io.EOF {
 				return err
 			}
 		}
