@@ -148,6 +148,16 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		}
 
 		if t == nil {
+			b := [1]byte{}
+
+			if _, err := decoder.reader.Read(b[:]); err != nil && err != io.EOF {
+				return err
+			}
+
+			if b[0] != 0 {
+				return unexpectedBehavior
+			}
+
 			return nil
 		}
 
