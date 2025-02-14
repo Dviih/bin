@@ -29,3 +29,17 @@ type Handler interface {
 	BinInput(*Decoder, reflect.Value)
 }
 
+type kindData struct {
+	Kind    int
+	Type    reflect.Type
+	Handler Handler
+}
+
+type kindMap struct {
+	// mkind map[int]kindData
+	mkind sync.Map
+
+	// mtype map[reflect.Type]kindData
+	mtype sync.Map
+}
+
