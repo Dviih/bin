@@ -24,3 +24,8 @@ import (
 	"sync"
 )
 
+type Handler interface {
+	BinOutput(*Encoder, reflect.Value)
+	BinInput(*Decoder, reflect.Value)
+}
+
