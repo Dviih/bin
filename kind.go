@@ -43,3 +43,14 @@ type kindMap struct {
 	mtype sync.Map
 }
 
+func (m *kindMap) Store(kind int, t reflect.Type, handler Handler) {
+	data := &kindData{
+		Kind:    kind,
+		Type:    t,
+		Handler: handler,
+	}
+
+	go m.mkind.Store(kind, data)
+	go m.mtype.Store(t, data)
+}
+
