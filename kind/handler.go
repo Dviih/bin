@@ -34,3 +34,22 @@ type Handler interface {
 	Decode(Decoder, reflect.Value) error
 }
 
+type ed struct {
+	encode func(Encoder, reflect.Value) error
+	decode func(Decoder, reflect.Value) error
+}
+
+func (m *ed) Encode(encoder Encoder, value reflect.Value) error {
+	return m.encode(encoder, value)
+}
+
+func (m *ed) Decode(decoder Decoder, value reflect.Value) error {
+	return m.decode(decoder, value)
+}
+
+func NewHandler(encode func(Encoder, reflect.Value) error, decode func(Decoder, reflect.Value) error) Handler {
+	return &ed{
+		encode: encode,
+		decode: decode,
+	}
+}
