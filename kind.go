@@ -21,66 +21,15 @@ package bin
 
 import (
 	"reflect"
-	"sync"
 )
 
-type Handler interface {
-	BinOutput(*Encoder, reflect.Value)
-	BinInput(*Decoder, reflect.Value)
+
+
+
 }
 
-type kindData struct {
-	Kind    int
-	Type    reflect.Type
-	Handler Handler
-}
-
-type kindMap struct {
-	// mkind map[int]kindData
-	mkind sync.Map
-
-	// mtype map[reflect.Type]kindData
-	mtype sync.Map
-}
-
-func (m *kindMap) Store(kind int, t reflect.Type, handler Handler) {
-	data := &kindData{
-		Kind:    kind,
-		Type:    t,
-		Handler: handler,
 	}
 
-	go m.mkind.Store(kind, data)
-	go m.mtype.Store(t, data)
 }
 
-func (m *kindMap) Get(v interface{}) (int, reflect.Type) {
-	switch v.(type) {
-	case int:
-		kind, ok := m.mkind.Load(v)
-		if !ok {
-			return 0, nil
-		}
-
-		data, ok := kind.(*kindData)
-		if !ok {
-			return 0, nil
-		}
-		return data.Kind, data.Type
-	case reflect.Type:
-		t, ok := m.mtype.Load(v)
-		if !ok {
-			return 0, nil
-		}
-
-		data, ok := t.(*kindData)
-		if !ok {
-			return 0, nil
-		}
-
-		return data.Kind, data.Type
-	default:
-		return 0, nil
-	}
-}
 
