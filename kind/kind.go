@@ -86,3 +86,34 @@ func (m *Map) Alias(kind int, t reflect.Type) {
 	m.mtype.Store(t, data)
 }
 
+func (m *Map) Run(v, i interface{}, value reflect.Value) (bool, error) {
+	var data *Data
+
+	switch v.(type) {
+	case int:
+		v, ok := m.mkind.Load(v)
+		if !ok {
+			return false, nil
+		}
+
+		data = v.(*Data)
+	case reflect.Type:
+		v, ok := m.mtype.Load(v)
+		if !ok {
+			return false, nil
+		}
+
+		data = v.(*Data)
+	default:
+		return false, nil
+	}
+
+	switch i := i.(type) {
+	case Encoder:
+		return true, data.Handler.Encode(i, value)
+	case Decoder:
+		return true, data.Handler.Decode(i, value)
+	default:
+		return false, nil
+	}
+}
