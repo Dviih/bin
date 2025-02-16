@@ -30,3 +30,8 @@ type Data struct {
 	Handler Handler
 }
 
+type Map struct {
+	mkind sync.Map
+	mtype sync.Map
+}
+
