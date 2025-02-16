@@ -21,3 +21,7 @@ package kind
 
 import "reflect"
 
+type Encoder interface {
+	Encode(interface{}) error
+}
+
