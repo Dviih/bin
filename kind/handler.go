@@ -29,3 +29,8 @@ type Decoder interface {
 	Decode(interface{}) error
 }
 
+type Handler interface {
+	Encode(Encoder, reflect.Value) error
+	Decode(Decoder, reflect.Value) error
+}
+
