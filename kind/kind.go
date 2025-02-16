@@ -46,3 +46,34 @@ func (m *Map) Store(kind int, t reflect.Type, handler Handler) {
 	m.mtype.Store(t, data)
 }
 
+func (m *Map) Load(v interface{}) (int, reflect.Type) {
+	switch v.(type) {
+	case int:
+		kind, ok := m.mkind.Load(v)
+		if !ok {
+			return 0, nil
+		}
+
+		data, ok := kind.(*Data)
+		if !ok {
+			return 0, nil
+		}
+
+		return data.Kind, data.Type
+	case reflect.Type:
+		t, ok := m.mtype.Load(v)
+		if !ok {
+			return 0, nil
+		}
+
+		data, ok := t.(*Data)
+		if !ok {
+			return 0, nil
+		}
+
+		return data.Kind, data.Type
+	default:
+		return 0, nil
+	}
+}
+
