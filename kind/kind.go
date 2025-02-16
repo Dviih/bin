@@ -77,3 +77,12 @@ func (m *Map) Load(v interface{}) (int, reflect.Type) {
 	}
 }
 
+func (m *Map) Alias(kind int, t reflect.Type) {
+	data, ok := m.mkind.Load(kind)
+	if !ok {
+		return
+	}
+
+	m.mtype.Store(t, data)
+}
+
