@@ -24,3 +24,9 @@ import (
 	"sync"
 )
 
+type Data struct {
+	Kind    int
+	Type    reflect.Type
+	Handler Handler
+}
+
