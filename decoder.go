@@ -309,87 +309,87 @@ func NewDecoder(reader io.Reader) *Decoder {
 	}
 }
 
-func (decoder *Decoder) getType() (reflect.Type, error) {
+func (decoder *Decoder) getType() (bool, reflect.Type, error) {
 	kind, err := VarIntOut[int](decoder.reader)
 	if err != nil {
-		return nil, err
+		return false, nil, err
 	}
 
 	switch reflect.Kind(kind) {
 	case reflect.Invalid:
-		return nil, nil
+		return false, nil, nil
 	case reflect.Bool:
-		return reflect.TypeFor[bool](), nil
+		return false, reflect.TypeFor[bool](), nil
 	case reflect.Int:
-		return reflect.TypeFor[int](), nil
+		return false, reflect.TypeFor[int](), nil
 	case reflect.Int8:
-		return reflect.TypeFor[int8](), nil
+		return false, reflect.TypeFor[int8](), nil
 	case reflect.Int16:
-		return reflect.TypeFor[int16](), nil
+		return false, reflect.TypeFor[int16](), nil
 	case reflect.Int32:
-		return reflect.TypeFor[int32](), nil
+		return false, reflect.TypeFor[int32](), nil
 	case reflect.Int64:
-		return reflect.TypeFor[int64](), nil
+		return false, reflect.TypeFor[int64](), nil
 	case reflect.Uint:
-		return reflect.TypeFor[uint](), nil
+		return false, reflect.TypeFor[uint](), nil
 	case reflect.Uint8:
-		return reflect.TypeFor[uint8](), nil
+		return false, reflect.TypeFor[uint8](), nil
 	case reflect.Uint16:
-		return reflect.TypeFor[uint16](), nil
+		return false, reflect.TypeFor[uint16](), nil
 	case reflect.Uint32:
-		return reflect.TypeFor[uint32](), nil
+		return false, reflect.TypeFor[uint32](), nil
 	case reflect.Uint64:
-		return reflect.TypeFor[uint64](), nil
+		return false, reflect.TypeFor[uint64](), nil
 	case reflect.Uintptr:
-		return reflect.TypeFor[uintptr](), nil
+		return false, reflect.TypeFor[uintptr](), nil
 	case reflect.Float32:
-		return reflect.TypeFor[float32](), nil
+		return false, reflect.TypeFor[float32](), nil
 	case reflect.Float64:
-		return reflect.TypeFor[float64](), nil
+		return false, reflect.TypeFor[float64](), nil
 	case reflect.Complex64:
-		return reflect.TypeFor[complex64](), nil
+		return false, reflect.TypeFor[complex64](), nil
 	case reflect.Complex128:
-		return reflect.TypeFor[complex128](), nil
+		return false, reflect.TypeFor[complex128](), nil
 	case reflect.Interface:
-		return reflect.TypeFor[interface{}](), nil
+		return false, reflect.TypeFor[interface{}](), nil
 	case reflect.String:
-		return reflect.TypeFor[string](), nil
+		return false, reflect.TypeFor[string](), nil
 	case reflect.Array:
 		d, err := VarIntOut[int](decoder.reader)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
 		var mixed bool
 		if err = decoder.Decode(&mixed); err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
 		var di []int
 		for i := 0; i < d; i++ {
 			n, err := VarIntOut[int](decoder.reader)
 			if err != nil {
-				return nil, err
+				return false, nil, err
 			}
 
 			di = append(di, n)
 		}
 
-		t, err := decoder.getType()
+		found, t, err := decoder.getType()
 		if err != nil {
-			return nil, err
+			return found, nil, err
 		}
 
-		return fromDepth(t, d, di), nil
+		return found, fromDepth(t, d, di), nil
 	case reflect.Slice:
 		d, err := VarIntOut[int](decoder.reader)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
 		var mixed bool
 		if err = decoder.Decode(&mixed); err != nil {
-			return nil, err
+			return false, nil, err
 		}
 
 		var di []int
@@ -398,36 +398,45 @@ func (decoder *Decoder) getType() (reflect.Type, error) {
 			for i := 0; i < d; i++ {
 				n, err := VarIntOut[int](decoder.reader)
 				if err != nil {
-					return nil, err
+					return false, nil, err
 				}
 
 				di = append(di, n)
 			}
 		}
 
-		t, err := decoder.getType()
+		found, t, err := decoder.getType()
 		if err != nil {
-			return nil, err
+			return found, nil, err
 		}
 
-		return fromDepth(t, d, di), nil
+		return found, fromDepth(t, d, di), nil
 	case reflect.Map:
-		key, err := decoder.getType()
+		found, key, err := decoder.getType()
 		if err != nil {
-			return nil, err
+			return found, nil, err
 		}
 
-		value, err := decoder.getType()
+		found2, value, err := decoder.getType()
 		if err != nil {
-			return nil, err
+			return found2, nil, err
 		}
 
-		return reflect.MapOf(key, value), nil
+		if !found && found2 {
+			found = true
+		}
+
+		return found, reflect.MapOf(key, value), nil
 	case reflect.Struct:
-		return reflect.TypeFor[*Struct](), nil
+		return false, reflect.TypeFor[*Struct](), nil
 	case reflect.Chan, reflect.Func, reflect.Pointer, reflect.UnsafePointer:
-		return nil, nil
+		return false, nil, nil
+	default:
+		_, lt := mkind.Load(kind)
+		if lt != nil {
+			return true, lt, nil
+		}
 	}
 
-	return nil, nil
+	return false, nil, nil
 }
