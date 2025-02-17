@@ -32,6 +32,15 @@ type Encoder struct {
 func (encoder *Encoder) Encode(v interface{}) error {
 	value := Value(v)
 
+	found, err := mkind.Run(value.Type(), encoder, value)
+	if err != nil {
+		return err
+	}
+
+	if found {
+		return nil
+	}
+
 	switch value.Kind() {
 	case reflect.Invalid, reflect.Uintptr, reflect.UnsafePointer:
 		if v == nil {
@@ -274,7 +283,18 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 			continue
 		}
 
-		if kind {
+		lf, _ := mkind.Load(field.Type())
+		if lf != 0 {
+			if err := encoder.Encode(lf); err != nil {
+				return err
+			}
+
+			if _, err := mkind.Run(lf, encoder, field); err != nil {
+				return err
+			}
+
+			continue
+		} else if kind {
 			if err := encoder.Encode(Interface(field.Interface())); err != nil {
 				return err
 			}
