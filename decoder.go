@@ -35,8 +35,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return CantSet
 	}
 
-	switch value.Type() {
-	case reflect.TypeFor[*Struct]():
+	if value.Type() == reflect.TypeFor[*Struct]() {
 		Zero(value)
 		return decoder.structs(value)
 	}
