@@ -40,6 +40,15 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		return decoder.structs(value)
 	}
 
+	found, err := mkind.Run(value.Type(), decoder, value)
+	if err != nil {
+		return err
+	}
+
+	if found {
+		return nil
+	}
+
 	if v == nil {
 		value.SetZero()
 		return nil
@@ -141,7 +150,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return nil
 		}
 
-		t, err := decoder.getType()
+		found, t, err := decoder.getType()
 		if err != nil {
 			return err
 		}
@@ -158,6 +167,11 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			}
 
 			return nil
+		}
+
+		if found {
+			_, err = mkind.Run(t, decoder, value)
+			return err
 		}
 
 		if t.Kind() == reflect.Struct {
@@ -278,12 +292,23 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 			return err
 		}
 
-		t, err := decoder.getType()
+		found, t, err := decoder.getType()
 		if err != nil {
 			return err
 		}
 
 		var ptr reflect.Value
+
+		if found {
+			ptr = reflect.New(t).Elem()
+
+			if _, err = mkind.Run(t, decoder, ptr); err != nil {
+				return err
+			}
+
+			s.m[tag] = ptr
+			continue
+		}
 
 		if t.Kind() == reflect.Struct {
 			ptr = reflect.New(reflect.TypeFor[interface{}]()).Elem()
@@ -292,6 +317,7 @@ func (decoder *Decoder) structs(value reflect.Value) error {
 			}
 		} else {
 			ptr = reflect.New(t).Elem()
+
 			if err = decoder.Decode(ptr); err != nil {
 				return err
 			}
