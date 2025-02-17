@@ -27,12 +27,24 @@ import (
 
 var mkind = &kind.Map{}
 
-
-
-}
-
+func Register[T interface{}](n int, handler kind.Handler) {
+	if n < 128 {
+		panic("invalid kind range")
 	}
 
+	register(n, Abs[reflect.Type](reflect.TypeFor[T]()), handler)
+}
+
+func register(n int, t reflect.Type, handler kind.Handler) {
+	mkind.Store(n, t, handler)
+}
+
+func Alias[T interface{}](n int) {
+	if n < 128 {
+		panic("invalid kind range")
+	}
+
+	mkind.Alias(n, Abs[reflect.Type](reflect.TypeFor[T]()))
 }
 
 
