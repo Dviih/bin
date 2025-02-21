@@ -59,4 +59,32 @@ func init() {
 		},
 	)
 
+	t := kind.NewHandler(
+		func(encoder kind.Encoder, value reflect.Value) error {
+			tm := value.MethodByName("MarshalText")
+			out := tm.Call(nil)
+
+			if !out[1].IsNil() {
+				return out[1].Interface().(error)
+			}
+
+			return encoder.Encode(out[1].Interface().([]byte))
+		},
+		func(decoder kind.Decoder, value reflect.Value) error {
+			var data []byte
+
+			if err := decoder.Decode(&data); err != nil {
+				return err
+			}
+
+			ut := value.MethodByName("UnmarshalText")
+
+			if out := ut.Call([]reflect.Value{reflect.ValueOf(data)}); !out[0].IsNil() {
+				return out[0].Interface().(error)
+			}
+
+			return nil
+		},
+	)
+
 }
