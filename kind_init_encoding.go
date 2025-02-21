@@ -31,4 +31,32 @@ import (
 // for `encoding.BinaryMarshaler`, `encoding.BinaryUnmarshaler`,
 // `encoding.TextMarshaler` and `encoding.TextUnmarshaler`
 func init() {
+	b := kind.NewHandler(
+		func(encoder kind.Encoder, value reflect.Value) error {
+			mb := value.MethodByName("MarshalBinary")
+			out := mb.Call(nil)
+
+			if !out[1].IsNil() {
+				return out[1].Interface().(error)
+			}
+
+			return encoder.Encode(out[0].Interface().([]byte))
+		},
+		func(decoder kind.Decoder, value reflect.Value) error {
+			var data []byte
+
+			if err := decoder.Decode(&data); err != nil {
+				return err
+			}
+
+			ub := value.MethodByName("UnmarshalBinary")
+
+			if out := ub.Call([]reflect.Value{reflect.ValueOf(data)}); !out[0].IsNil() {
+				return out[0].Interface().(error)
+			}
+
+			return nil
+		},
+	)
+
 }
