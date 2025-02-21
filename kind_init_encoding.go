@@ -26,3 +26,9 @@ import (
 	"github.com/Dviih/bin/kind"
 	"reflect"
 )
+
+// This init function is responsible to add handlers
+// for `encoding.BinaryMarshaler`, `encoding.BinaryUnmarshaler`,
+// `encoding.TextMarshaler` and `encoding.TextUnmarshaler`
+func init() {
+}
