@@ -20,7 +20,6 @@
 package bin
 
 import (
-	"encoding"
 	"github.com/Dviih/bin/kind"
 	"reflect"
 )
