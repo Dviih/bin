@@ -76,7 +76,8 @@ func init() {
 
 			ut := value.MethodByName("UnmarshalText")
 
-			if out := ut.Call([]reflect.Value{reflect.ValueOf(data)}); !out[0].IsNil() {
+			out := ut.Call([]reflect.Value{reflect.ValueOf(data)})
+			if !out[0].IsNil() {
 				return out[0].Interface().(error)
 			}
 
