@@ -86,7 +86,7 @@ func init() {
 	)
 
 	register(65, reflect.TypeFor[encoding.BinaryMarshaler](), b)
-	mkind.Alias(65, reflect.TypeFor[encoding.BinaryMarshaler]())
+	mkind.Alias(65, reflect.TypeFor[encoding.BinaryUnmarshaler]())
 
 	register(66, reflect.TypeFor[encoding.TextMarshaler](), t)
 	mkind.Alias(66, reflect.TypeFor[encoding.TextUnmarshaler]())
