@@ -65,7 +65,7 @@ func init() {
 				return out[1].Interface().(error)
 			}
 
-			return encoder.Encode(out[1].Interface().([]byte))
+			return encoder.Encode(out[0].Interface().([]byte))
 		},
 		func(decoder kind.Decoder, value reflect.Value) error {
 			var data []byte
