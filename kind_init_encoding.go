@@ -33,9 +33,7 @@ import (
 func init() {
 	b := kind.NewHandler(
 		func(encoder kind.Encoder, value reflect.Value) error {
-			mb := value.MethodByName("MarshalBinary")
-			out := mb.Call(nil)
-
+			out := kind.Call(value, "MarshalBinary")
 			if !out[1].IsNil() {
 				return out[1].Interface().(error)
 			}
@@ -49,9 +47,8 @@ func init() {
 				return err
 			}
 
-			ub := value.MethodByName("UnmarshalBinary")
-
-			if out := ub.Call([]reflect.Value{reflect.ValueOf(data)}); !out[0].IsNil() {
+			out := kind.Call(value, "UnmarshalBinary", reflect.ValueOf(data))
+			if !out[0].IsNil() {
 				return out[0].Interface().(error)
 			}
 
