@@ -296,8 +296,10 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 		lf, _ := mkind.Load(field.Type())
 		if lf != 0 {
-			if err := encoder.Encode(lf); err != nil {
-				return err
+			if kind {
+				if err := encoder.Encode(lf); err != nil {
+					return err
+				}
 			}
 
 			if _, err := mkind.Run(lf, encoder, field); err != nil {
