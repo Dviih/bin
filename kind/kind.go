@@ -83,6 +83,46 @@ func (m *Map) Load(v interface{}) (int, reflect.Type) {
 	}
 }
 
+func (m *Map) Has(t reflect.Type) (int, bool) {
+	if _, ok := m.cache.Load(t); ok {
+		return 0, false
+	}
+
+	data, ok := m.mtype.Load(t)
+	if !ok {
+		kind := 0
+		found := false
+
+		m.mtype.Range(func(rk, rv any) bool {
+			if rk.(reflect.Type).Kind() != reflect.Interface {
+				return true
+			}
+
+			if t.Implements(rk.(reflect.Type)) {
+				kind = rv.(*Data).Kind
+				found = true
+
+				return false
+			}
+
+			return true
+		})
+
+		if !found {
+			if t.Kind() == reflect.Pointer {
+				m.cache.Store(t, true)
+				return 0, false
+			}
+
+			return m.Has(reflect.PointerTo(t))
+		}
+
+		return kind, found
+	}
+
+	return data.(*Data).Kind, true
+}
+
 func (m *Map) Alias(kind int, t reflect.Type) {
 	data, ok := m.mkind.Load(kind)
 	if !ok {
