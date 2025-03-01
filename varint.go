@@ -21,6 +21,7 @@ package bin
 
 import (
 	"io"
+	"reflect"
 	"unsafe"
 )
 
