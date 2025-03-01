@@ -27,64 +27,6 @@ import (
 	"reflect"
 )
 
-// This init function is responsible to add handlers
-// for `encoding.BinaryMarshaler`, `encoding.BinaryUnmarshaler`,
-// `encoding.TextMarshaler` and `encoding.TextUnmarshaler`
 func init() {
-	b := kind.NewHandler(
-		func(encoder kind.Encoder, value reflect.Value) error {
-			out := kind.Call(value, "MarshalBinary")
-			if !out[1].IsNil() {
-				return out[1].Interface().(error)
-			}
-
-			return encoder.Encode(out[0].Interface().([]byte))
-		},
-		func(decoder kind.Decoder, value reflect.Value) error {
-			var data []byte
-
-			if err := decoder.Decode(&data); err != nil {
-				return err
-			}
-
-			out := kind.Call(value, "UnmarshalBinary", reflect.ValueOf(data))
-			if !out[0].IsNil() {
-				return out[0].Interface().(error)
-			}
-
-			return nil
-		},
-	)
-
-	t := kind.NewHandler(
-		func(encoder kind.Encoder, value reflect.Value) error {
-			tm := value.MethodByName("MarshalText")
-			out := tm.Call(nil)
-
-			if !out[1].IsNil() {
-				return out[1].Interface().(error)
-			}
-
-			return encoder.Encode(out[0].Interface().([]byte))
-		},
-		func(decoder kind.Decoder, value reflect.Value) error {
-			var data []byte
-
-			if err := decoder.Decode(&data); err != nil {
-				return err
-			}
-
-			ut := value.MethodByName("UnmarshalText")
-
-			out := ut.Call([]reflect.Value{reflect.ValueOf(data)})
-			if !out[0].IsNil() {
-				return out[0].Interface().(error)
-			}
-
-			return nil
-		},
-	)
-
-	register(65, reflect.TypeFor[encoding.BinaryMarshaler](), b)
 	mkind.Alias(65, reflect.TypeFor[encoding.BinaryUnmarshaler]())
 }
