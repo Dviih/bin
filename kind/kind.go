@@ -33,6 +33,7 @@ type Data struct {
 type Map struct {
 	mkind sync.Map
 	mtype sync.Map
+	cache sync.Map
 }
 
 func (m *Map) Store(kind int, t reflect.Type, handler Handler) {
@@ -61,8 +62,13 @@ func (m *Map) Load(v interface{}) (int, reflect.Type) {
 
 		return data.Kind, data.Type
 	case reflect.Type:
+		if _, ok := m.cache.Load(v); ok {
+			return 0, nil
+		}
+
 		t, ok := m.mtype.Load(v)
 		if !ok {
+			m.cache.Store(v, true)
 			return 0, nil
 		}
 
