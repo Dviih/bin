@@ -28,5 +28,6 @@ import (
 )
 
 func init() {
+	register(65, reflect.TypeFor[encoding.BinaryMarshaler](), kind.EncodingBinary)
 	mkind.Alias(65, reflect.TypeFor[encoding.BinaryUnmarshaler]())
 }
