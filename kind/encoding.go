@@ -52,3 +52,32 @@ var EncodingBinary = NewHandler(
 	},
 )
 
+var EncodingText = NewHandler(
+	func(encoder Encoder, value reflect.Value) error {
+		out := Call(value, "MarshalText")
+		if !out[1].IsNil() {
+			return out[1].Interface().(error)
+		}
+
+		if err := encoder.Encode(out[0].Len()); err != nil {
+			return err
+		}
+
+		return encoder.Encode(out[0].Interface().([]byte))
+	},
+	func(decoder Decoder, value reflect.Value) error {
+		var data []byte
+
+		if err := decoder.Decode(&data); err != nil {
+			return err
+		}
+
+		out := Call(value, "UnmarshalText", reflect.ValueOf(data))
+		if !out[0].IsNil() {
+			return out[0].Interface().(error)
+		}
+
+		return nil
+	},
+)
+
