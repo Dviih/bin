@@ -23,3 +23,32 @@ import (
 	"reflect"
 )
 
+var EncodingBinary = NewHandler(
+	func(encoder Encoder, value reflect.Value) error {
+		out := Call(value, "MarshalBinary")
+		if !out[1].IsNil() {
+			return out[1].Interface().(error)
+		}
+
+		return encoder.Encode(out[0].Interface().([]byte))
+	},
+	func(decoder Decoder, value reflect.Value) error {
+		var data []byte
+
+		if err := decoder.Decode(&data); err != nil {
+			return err
+		}
+
+		if len(data) == 0 {
+			return nil
+		}
+
+		out := Call(value, "UnmarshalBinary", reflect.ValueOf(data))
+		if !out[0].IsNil() {
+			return out[0].Interface().(error)
+		}
+
+		return nil
+	},
+)
+
