@@ -112,6 +112,15 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
+		if n, ok := mkind.Has(value.Type()); ok {
+			if err := encoder.Encode(n); err != nil {
+				return err
+			}
+
+			_, err := mkind.Run(n, encoder, value)
+			return err
+		}
+
 		switch value.Kind() {
 		case reflect.Array, reflect.Slice:
 			_, elem := KeyElem(value)
