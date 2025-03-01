@@ -1,6 +1,6 @@
 /*
  *     A tiny binary format
- *     Copyright (C) 2024  Dviih
+ *     Copyright (C) 2025  Dviih
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,11 @@ func Interface(v interface{}) reflect.Value {
 	}
 
 	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
-	ptr.Set(interfaces(Value(v)))
+	if _, ok := mkind.Has(Value(v).Type()); ok {
+		ptr.Set(Value(v))
+	} else {
+		ptr.Set(interfaces(Value(v)))
+	}
 
 	return ptr
 }
