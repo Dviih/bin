@@ -81,3 +81,31 @@ var EncodingText = NewHandler(
 	},
 )
 
+// This file includes the handler for `encoding/gob`,
+// since bin acts as an alternative to gob, it is only
+// used for some packages that implement it but not
+// the standard.
+
+var Gob = NewHandler(
+	func(encoder Encoder, value reflect.Value) error {
+		i := Call(value, "GobEncode")
+		if !i[1].IsNil() {
+			return i[1].Interface().(error)
+		}
+
+		return encoder.Encode(i[0].Interface().([]byte))
+	},
+	func(decoder Decoder, value reflect.Value) error {
+		var data []byte
+
+		if err := decoder.Decode(&data); err != nil {
+			return err
+		}
+
+		if i := Call(value, "GobDecode", reflect.ValueOf(data)); !i[0].IsNil() {
+			return i[0].Interface().(error)
+		}
+
+		return nil
+	},
+)
