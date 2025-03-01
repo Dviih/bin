@@ -53,3 +53,12 @@ func NewHandler(encode func(Encoder, reflect.Value) error, decode func(Decoder, 
 		decode: decode,
 	}
 }
+
+// Pointer transforms value T into *T with reflection.
+func Pointer(value reflect.Value) reflect.Value {
+	ptr := reflect.New(value.Type())
+	ptr.Elem().Set(value)
+
+	return ptr
+}
+
