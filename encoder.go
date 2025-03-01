@@ -60,12 +60,12 @@ func (encoder *Encoder) Encode(v interface{}) error {
 			return err
 		}
 		return nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 	case reflect.Uint8:
 		if _, err := encoder.writer.Write([]byte{byte(value.Uint())}); err != nil {
 			return err
 		}
 		return nil
+	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		if err := VarIntIn(encoder.writer, value.Uint()); err != nil {
 			return err
 		}
