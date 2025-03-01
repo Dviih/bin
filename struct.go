@@ -256,6 +256,17 @@ func As[T interface{}](v interface{}) T {
 		value := Value(v)
 		t := reflect.TypeFor[T]()
 
+		if value.Type() == Abs[reflect.Type](t) {
+			for value.Type() != t {
+				ptr := reflect.New(value.Type())
+				ptr.Elem().Set(value)
+
+				value = ptr
+			}
+
+			return value.Interface().(T)
+		}
+
 		var ptr reflect.Value
 
 		switch value.Kind() {
