@@ -32,13 +32,15 @@ type Encoder struct {
 func (encoder *Encoder) Encode(v interface{}) error {
 	value := Value(v)
 
-	found, err := mkind.Run(value.Type(), encoder, value)
-	if err != nil {
-		return err
-	}
+	if v != nil {
+		found, err := mkind.Run(value.Type(), encoder, value)
+		if err != nil {
+			return err
+		}
 
-	if found {
-		return nil
+		if found {
+			return nil
+		}
 	}
 
 	switch value.Kind() {
