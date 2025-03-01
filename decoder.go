@@ -170,8 +170,13 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		}
 
 		if found {
-			_, err = mkind.Run(t, decoder, value)
-			return err
+			ptr := reflect.New(t)
+			if _, err = mkind.Run(t, decoder, ptr.Elem()); err != nil {
+				return err
+			}
+
+			value.Set(ptr.Elem())
+			return nil
 		}
 
 		if t.Kind() == reflect.Struct {
