@@ -99,7 +99,7 @@ func (decoder *Decoder) Decode(v interface{}) error {
 
 		value.SetInt(n)
 		return nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		n, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
