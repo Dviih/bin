@@ -77,7 +77,21 @@ func (decoder *Decoder) Decode(v interface{}) error {
 
 		value.Set(reflect.ValueOf(false))
 		return nil
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+	case reflect.Int8:
+		b := [1]byte{}
+
+		n, err := decoder.reader.Read(b[:])
+		if err != nil {
+			return err
+		}
+
+		if n != 1 {
+			return io.EOF
+		}
+
+		value.SetInt(int64(b[0]))
+		return nil
+	case reflect.Int, reflect.Int16, reflect.Int32, reflect.Int64:
 		n, err := VarIntOut[int64](decoder.reader)
 		if err != nil {
 			return err
@@ -85,7 +99,21 @@ func (decoder *Decoder) Decode(v interface{}) error {
 
 		value.SetInt(n)
 		return nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+	case reflect.Uint8:
+		b := [1]byte{}
+
+		n, err := decoder.reader.Read(b[:])
+		if err != nil {
+			return err
+		}
+
+		if n != 1 {
+			return io.EOF
+		}
+
+		value.SetUint(uint64(b[0]))
+		return nil
+	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		n, err := VarIntOut[uint64](decoder.reader)
 		if err != nil {
 			return err
