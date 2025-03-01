@@ -144,12 +144,39 @@ func (m *Map) Run(v, i interface{}, value reflect.Value) (bool, error) {
 
 		data = v.(*Data)
 	case reflect.Type:
-		v, ok := m.mtype.Load(v)
+		t, ok := m.mtype.Load(v)
 		if !ok {
-			return false, nil
+			m.mtype.Range(func(rk, rv any) bool {
+				if rk.(reflect.Type).Kind() != reflect.Interface {
+					return true
+				}
+
+				if value.Type().Implements(rk.(reflect.Type)) {
+					t = rv
+					return false
+				}
+
+				return true
+			})
+
+			if t == nil {
+				if value.Kind() == reflect.Pointer {
+					return false, nil
+				}
+
+				ptr := Pointer(value)
+
+				status, err := m.Run(v, i, ptr)
+				if status == false || err != nil {
+					return status, err
+				}
+
+				value.Set(ptr.Elem())
+				return status, err
+			}
 		}
 
-		data = v.(*Data)
+		data = t.(*Data)
 	default:
 		return false, nil
 	}
