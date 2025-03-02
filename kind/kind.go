@@ -33,7 +33,6 @@ type Data struct {
 type Map struct {
 	mkind sync.Map
 	mtype sync.Map
-	cache sync.Map
 }
 
 func (m *Map) Store(kind int, t reflect.Type, handler Handler) {
