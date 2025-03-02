@@ -32,13 +32,15 @@ type Encoder struct {
 func (encoder *Encoder) Encode(v interface{}) error {
 	value := Value(v)
 
-	found, err := mkind.Run(value.Type(), encoder, value)
-	if err != nil {
-		return err
-	}
+	if v != nil {
+		found, err := mkind.Run(value.Type(), encoder, value)
+		if err != nil {
+			return err
+		}
 
-	if found {
-		return nil
+		if found {
+			return nil
+		}
 	}
 
 	switch value.Kind() {
@@ -119,6 +121,15 @@ func (encoder *Encoder) Encode(v interface{}) error {
 		}
 
 		value = Abs[reflect.Value](value)
+
+		if n, _ := mkind.Load(value.Type()); n != 0 {
+			if err := encoder.Encode(n); err != nil {
+				return err
+			}
+
+			_, err := mkind.Run(n, encoder, value)
+			return err
+		}
 
 		switch value.Kind() {
 		case reflect.Array, reflect.Slice:
@@ -250,25 +261,25 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 	t := value.Type()
 
 	for i := 0; i < value.NumField(); i++ {
-		field := Abs[reflect.Value](value.Field(i))
-		if field.IsZero() && kind {
+		field := value.Field(i)
+		if kind && field.IsZero() {
 			continue
 		}
 
-		fieldType := t.Field(i)
+		ft := t.Field(i)
 
-		if !fieldType.IsExported() {
+		if !ft.IsExported() {
 			continue
 		}
 
 		kind := kind
-		if !kind && fieldType.Type.Kind() == reflect.Interface {
+		if !kind && ft.Type.Kind() == reflect.Interface {
 			kind = true
 		}
 
 		tag := i + 1
 
-		if lookup, ok := fieldType.Tag.Lookup("bin"); ok {
+		if lookup, ok := ft.Tag.Lookup("bin"); ok {
 			if lookup == "-" {
 				continue
 			}
@@ -295,8 +306,10 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 
 		lf, _ := mkind.Load(field.Type())
 		if lf != 0 {
-			if err := encoder.Encode(lf); err != nil {
-				return err
+			if kind {
+				if err := encoder.Encode(lf); err != nil {
+					return err
+				}
 			}
 
 			if _, err := mkind.Run(lf, encoder, field); err != nil {

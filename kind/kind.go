@@ -46,35 +46,66 @@ func (m *Map) Store(kind int, t reflect.Type, handler Handler) {
 	m.mtype.Store(t, data)
 }
 
-func (m *Map) Load(v interface{}) (int, reflect.Type) {
-	switch v.(type) {
+func (m *Map) load(v interface{}) *Data {
+	switch v := v.(type) {
 	case int:
 		kind, ok := m.mkind.Load(v)
 		if !ok {
-			return 0, nil
+			return nil
 		}
 
 		data, ok := kind.(*Data)
 		if !ok {
-			return 0, nil
+			return nil
 		}
 
-		return data.Kind, data.Type
+		return data
 	case reflect.Type:
 		t, ok := m.mtype.Load(v)
 		if !ok {
-			return 0, nil
+			p := reflect.PointerTo(v)
+
+			m.mtype.Range(func(rk, rv any) bool {
+				if rk.(reflect.Type).Kind() != reflect.Interface {
+					return true
+				}
+
+				if v.Implements(rk.(reflect.Type)) || p.Implements(rk.(reflect.Type)) {
+					t = rv
+					return false
+				}
+
+				return true
+			})
+
+			if t == nil {
+				m.mtype.Store(v, true)
+				return nil
+			}
+
+			m.mtype.Store(v, t)
 		}
 
-		data, ok := t.(*Data)
-		if !ok {
-			return 0, nil
+		switch t := t.(type) {
+		case bool:
+			return nil
+		case *Data:
+			return t
 		}
 
-		return data.Kind, data.Type
+		return nil
 	default:
+		return nil
+	}
+}
+
+func (m *Map) Load(v interface{}) (int, reflect.Type) {
+	data := m.load(v)
+	if data == nil {
 		return 0, nil
 	}
+
+	return data.Kind, data.Type
 }
 
 func (m *Map) Alias(kind int, t reflect.Type) {
@@ -87,24 +118,8 @@ func (m *Map) Alias(kind int, t reflect.Type) {
 }
 
 func (m *Map) Run(v, i interface{}, value reflect.Value) (bool, error) {
-	var data *Data
-
-	switch v.(type) {
-	case int:
-		v, ok := m.mkind.Load(v)
-		if !ok {
-			return false, nil
-		}
-
-		data = v.(*Data)
-	case reflect.Type:
-		v, ok := m.mtype.Load(v)
-		if !ok {
-			return false, nil
-		}
-
-		data = v.(*Data)
-	default:
+	data := m.load(v)
+	if data == nil {
 		return false, nil
 	}
 

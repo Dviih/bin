@@ -53,3 +53,37 @@ func NewHandler(encode func(Encoder, reflect.Value) error, decode func(Decoder, 
 		decode: decode,
 	}
 }
+
+// Pointer transforms value T into *T with reflection.
+func Pointer(value reflect.Value) reflect.Value {
+	ptr := reflect.New(value.Type())
+	ptr.Elem().Set(value)
+
+	return ptr
+}
+
+// Call tries to call normal value and then pointer.
+func Call(value reflect.Value, method string, v ...reflect.Value) []reflect.Value {
+	if method == "" {
+		return value.Call(v)
+	}
+
+	var ptr reflect.Value
+
+	m := value.MethodByName(method)
+	if !m.IsValid() {
+		ptr = Pointer(value)
+		m = ptr.MethodByName(method)
+	}
+
+	out := m.Call(v)
+	if ptr.Kind() == reflect.Invalid {
+		return out
+	}
+
+	if value.CanSet() {
+		value.Set(ptr.Elem())
+	}
+
+	return out
+}
