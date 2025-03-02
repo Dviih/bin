@@ -251,25 +251,25 @@ func (encoder *Encoder) structs(value reflect.Value, kind bool) error {
 	t := value.Type()
 
 	for i := 0; i < value.NumField(); i++ {
-		field := Abs[reflect.Value](value.Field(i))
-		if field.IsZero() && kind {
+		field := value.Field(i)
+		if kind && field.IsZero() {
 			continue
 		}
 
-		fieldType := t.Field(i)
+		ft := t.Field(i)
 
-		if !fieldType.IsExported() {
+		if !ft.IsExported() {
 			continue
 		}
 
 		kind := kind
-		if !kind && fieldType.Type.Kind() == reflect.Interface {
+		if !kind && ft.Type.Kind() == reflect.Interface {
 			kind = true
 		}
 
 		tag := i + 1
 
-		if lookup, ok := fieldType.Tag.Lookup("bin"); ok {
+		if lookup, ok := ft.Tag.Lookup("bin"); ok {
 			if lookup == "-" {
 				continue
 			}
