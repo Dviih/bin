@@ -27,3 +27,5 @@ import (
 	"reflect"
 )
 
+func init() {
+}
