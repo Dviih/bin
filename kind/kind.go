@@ -47,8 +47,6 @@ func (m *Map) Store(kind int, t reflect.Type, handler Handler) {
 	m.mtype.Store(t, data)
 }
 
-func (m *Map) Load(v interface{}) (int, reflect.Type) {
-	switch v.(type) {
 func (m *Map) load(v interface{}) *Data {
 	switch v := v.(type) {
 	case int:
@@ -89,11 +87,26 @@ func (m *Map) load(v interface{}) *Data {
 			m.mtype.Store(v, t)
 		}
 
+		switch t := t.(type) {
+		case bool:
+			return nil
+		case *Data:
+			return t
 		}
 
+		return nil
+	default:
+		return nil
 	}
 }
 
+func (m *Map) Load(v interface{}) (int, reflect.Type) {
+	data := m.load(v)
+	if data == nil {
+		return 0, nil
+	}
+
+	return data.Kind, data.Type
 }
 
 func (m *Map) Alias(kind int, t reflect.Type) {
