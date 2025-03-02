@@ -28,4 +28,20 @@ import (
 )
 
 func init() {
+	i := kind.NewHandler(
+		func(encoder kind.Encoder, value reflect.Value) error {
+			return encoder.Encode(kind.Call(value, "Bytes")[0].Interface())
+		},
+		func(decoder kind.Decoder, value reflect.Value) error {
+			var data []byte
+
+			if err := decoder.Decode(&data); err != nil {
+				return err
+			}
+
+			kind.Call(value, "SetBytes", reflect.ValueOf(data))
+			return nil
+		},
+	)
+
 }
