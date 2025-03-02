@@ -68,58 +68,32 @@ func (m *Map) load(v interface{}) *Data {
 		if !ok {
 			p := reflect.PointerTo(v)
 
-func (m *Map) Has(t reflect.Type) (int, bool) {
-	if _, ok := m.cache.Load(t); ok {
-		return 0, false
-	}
 			m.mtype.Range(func(rk, rv any) bool {
 				if rk.(reflect.Type).Kind() != reflect.Interface {
 					return true
 				}
 
-	data, ok := m.mtype.Load(t)
-	if !ok {
-		kind := 0
-		found := false
 				if v.Implements(rk.(reflect.Type)) || p.Implements(rk.(reflect.Type)) {
 					t = rv
 					return false
 				}
 
-		m.mtype.Range(func(rk, rv any) bool {
-			if rk.(reflect.Type).Kind() != reflect.Interface {
 				return true
-			}
+			})
 
-			if t.Implements(rk.(reflect.Type)) {
-				kind = rv.(*Data).Kind
-				found = true
-
-				return false
 			if t == nil {
 				m.mtype.Store(v, true)
 				return nil
 			}
 
-			return true
-		})
-
-		if !found {
-			if t.Kind() == reflect.Pointer {
-				m.cache.Store(t, true)
-				return 0, false
-			}
 			m.mtype.Store(v, t)
 		}
 
-			return m.Has(reflect.PointerTo(t))
 		}
 
-		return kind, found
 	}
 }
 
-	return data.(*Data).Kind, true
 }
 
 func (m *Map) Alias(kind int, t reflect.Type) {
