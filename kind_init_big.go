@@ -44,4 +44,5 @@ func init() {
 		},
 	)
 
+	register(67, reflect.TypeFor[big.Int](), i)
 }
