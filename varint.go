@@ -21,6 +21,7 @@ package bin
 
 import (
 	"io"
+	"reflect"
 	"unsafe"
 )
 
@@ -31,9 +32,19 @@ type Integer = interface {
 func VarIntIn[T Integer](writer io.Writer, t T) error {
 	b := make([]byte, 0)
 
-	for int(t) >= 0x80 {
-		b = append(b, byte(t)|0x80)
-		t >>= 7
+	switch reflect.ValueOf(t).Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		for int64(t) >= 0x80 {
+			b = append(b, byte(t)|0x80)
+			t >>= 7
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		for uint64(t) >= 0x80 {
+			b = append(b, byte(t)|0x80)
+			t >>= 7
+		}
+	default:
+		panic("impossible")
 	}
 
 	b = append(b, byte(t))
