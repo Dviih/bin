@@ -29,7 +29,7 @@ func Interface(v interface{}) reflect.Value {
 	}
 
 	ptr := reflect.New(reflect.TypeFor[interface{}]()).Elem()
-	if _, ok := mkind.Has(Value(v).Type()); ok {
+	if n, _ := mkind.Load(Value(v).Type()); n != 0 {
 		ptr.Set(Value(v))
 	} else {
 		ptr.Set(interfaces(Value(v)))

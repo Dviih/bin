@@ -112,7 +112,7 @@ func (encoder *Encoder) Encode(v interface{}) error {
 
 		value = Abs[reflect.Value](value)
 
-		if n, ok := mkind.Has(value.Type()); ok {
+		if n, _ := mkind.Load(value.Type()); n != 0 {
 			if err := encoder.Encode(n); err != nil {
 				return err
 			}
