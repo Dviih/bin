@@ -119,51 +119,8 @@ func (m *Map) Alias(kind int, t reflect.Type) {
 }
 
 func (m *Map) Run(v, i interface{}, value reflect.Value) (bool, error) {
-	var data *Data
-
-	switch v.(type) {
-	case int:
-		v, ok := m.mkind.Load(v)
-		if !ok {
-			return false, nil
-		}
-
-		data = v.(*Data)
-	case reflect.Type:
-		t, ok := m.mtype.Load(v)
-		if !ok {
-			m.mtype.Range(func(rk, rv any) bool {
-				if rk.(reflect.Type).Kind() != reflect.Interface {
-					return true
-				}
-
-				if value.Type().Implements(rk.(reflect.Type)) {
-					t = rv
-					return false
-				}
-
-				return true
-			})
-
-			if t == nil {
-				if value.Kind() == reflect.Pointer {
-					return false, nil
-				}
-
-				ptr := Pointer(value)
-
-				status, err := m.Run(v, i, ptr)
-				if status == false || err != nil {
-					return status, err
-				}
-
-				value.Set(ptr.Elem())
-				return status, err
-			}
-		}
-
-		data = t.(*Data)
-	default:
+	data := m.load(v)
+	if data == nil {
 		return false, nil
 	}
 
