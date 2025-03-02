@@ -45,4 +45,6 @@ func init() {
 	)
 
 	register(67, reflect.TypeFor[big.Int](), i)
+	register(68, reflect.TypeFor[big.Float](), kind.Gob)
+	register(69, reflect.TypeFor[big.Rat](), kind.Gob)
 }
