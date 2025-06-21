@@ -101,6 +101,23 @@ func realType(p reflect.Type) reflect.Type {
 	}
 }
 
+var Bin = NewHandler(
+	func(encoder Encoder, value reflect.Value) error {
+		ptr := reflect.New(realType(value.Type()))
+		ptr.Elem().Set(value)
+
+		return encoder.Encode(ptr)
+	},
+	func(decoder Decoder, value reflect.Value) error {
+		ptr := reflect.New(realType(value.Type()))
+
+		if err := decoder.Decode(ptr.Elem()); err != nil {
+			return err
+		}
+
+		value.Set(ptr.Elem())
+		return nil
+	},
 )
 
 var EncodingBinary = NewHandler(
