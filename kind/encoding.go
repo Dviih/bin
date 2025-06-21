@@ -21,6 +21,103 @@ package kind
 
 import (
 	"reflect"
+	"unsafe"
+)
+
+func realType(p reflect.Type) reflect.Type {
+	switch p.Kind() {
+	case reflect.Invalid:
+		return reflect.TypeOf(nil)
+	case reflect.Bool:
+		return reflect.TypeFor[bool]()
+	case reflect.Int:
+		return reflect.TypeFor[int]()
+	case reflect.Int8:
+		return reflect.TypeFor[int8]()
+	case reflect.Int16:
+		return reflect.TypeFor[int16]()
+	case reflect.Int32:
+		return reflect.TypeFor[int32]()
+	case reflect.Int64:
+		return reflect.TypeFor[int64]()
+	case reflect.Uint:
+		return reflect.TypeFor[int]()
+	case reflect.Uint8:
+		return reflect.TypeFor[int8]()
+	case reflect.Uint16:
+		return reflect.TypeFor[uint16]()
+	case reflect.Uint32:
+		return reflect.TypeFor[uint32]()
+	case reflect.Uint64:
+		return reflect.TypeFor[uint64]()
+	case reflect.Uintptr:
+		return reflect.TypeFor[uintptr]()
+	case reflect.Float32:
+		return reflect.TypeFor[float32]()
+	case reflect.Float64:
+		return reflect.TypeFor[float64]()
+	case reflect.Complex64:
+		return reflect.TypeFor[complex64]()
+	case reflect.Complex128:
+		return reflect.TypeFor[complex128]()
+	case reflect.Array:
+		return reflect.ArrayOf(p.Len(), realType(p.Elem()))
+	case reflect.Chan:
+		return reflect.ChanOf(p.ChanDir(), realType(p.Elem()))
+	case reflect.Func:
+		var in, out []reflect.Type
+
+		for i := 0; i < p.NumIn(); i++ {
+			in = append(in, realType(p.In(i)))
+		}
+
+		for i := 0; i < p.NumOut(); i++ {
+			out = append(out, realType(p.Out(i)))
+		}
+
+		return reflect.FuncOf(in, out, p.IsVariadic())
+	case reflect.Interface:
+		return nil
+	case reflect.Map:
+		return reflect.MapOf(realType(p.Key()), realType(p.Elem()))
+	case reflect.Pointer:
+		return reflect.TypeFor[uintptr]()
+	case reflect.Slice:
+		return reflect.SliceOf(realType(p.Elem()))
+	case reflect.String:
+		return reflect.TypeFor[string]()
+	case reflect.Struct:
+		var fields []reflect.StructField
+
+		for i := 0; i < p.NumField(); i++ {
+			fields = append(fields, p.Field(i))
+		}
+
+		return reflect.StructOf(fields)
+	case reflect.UnsafePointer:
+		return reflect.TypeFor[unsafe.Pointer]()
+	default:
+		return nil
+	}
+}
+
+var Bin = NewHandler(
+	func(encoder Encoder, value reflect.Value) error {
+		ptr := reflect.New(realType(value.Type()))
+		ptr.Elem().Set(value)
+
+		return encoder.Encode(ptr)
+	},
+	func(decoder Decoder, value reflect.Value) error {
+		ptr := reflect.New(realType(value.Type()))
+
+		if err := decoder.Decode(ptr.Elem()); err != nil {
+			return err
+		}
+
+		value.Set(ptr.Elem())
+		return nil
+	},
 )
 
 var EncodingBinary = NewHandler(
