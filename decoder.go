@@ -225,6 +225,10 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
+		if size == 0 {
+			return nil
+		}
+
 		value.Set(reflect.MakeMapWithSize(value.Type(), size))
 
 		keyType := value.Type().Key()
@@ -258,6 +262,10 @@ func (decoder *Decoder) Decode(v interface{}) error {
 			return err
 		}
 
+		if size == 0 {
+			return nil
+		}
+
 		value.Set(reflect.MakeSlice(value.Type(), size, size))
 
 		for i := 0; i < size; i++ {
@@ -271,6 +279,10 @@ func (decoder *Decoder) Decode(v interface{}) error {
 		size, err := VarIntOut[int](decoder.reader)
 		if err != nil {
 			return err
+		}
+
+		if size == 0 {
+			return nil
 		}
 
 		data := make([]byte, size)
